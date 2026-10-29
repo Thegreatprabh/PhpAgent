@@ -35,7 +35,7 @@
       "throw",
       "finally",
       "custom exception",
-      "try catch kaise use kare"
+      "how to use try catch"
     ],
     "functions": [],
     "answer": "Throw an exception when something cannot continue normally, catch it where you can handle it, and use finally for cleanup that must run either way. Catch the most specific exception type first. Custom exception classes let callers handle your errors separately from generic ones.",
@@ -60,7 +60,7 @@
       "error levels",
       "E_ALL",
       "set_error_handler",
-      "error types kaise samjhe"
+      "understanding error types"
     ],
     "functions": [
       "set_error_handler",
@@ -86,7 +86,7 @@
       "logging",
       "log errors",
       "error log file",
-      "log kaise kare",
+      "how to log errors",
       "structured logging"
     ],
     "functions": [

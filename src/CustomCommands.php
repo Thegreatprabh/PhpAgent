@@ -174,7 +174,7 @@ final class CustomCommands
             $entry = $agent->entryById($lastTopicId);
         }
         if ($entry === null) {
-            return $this->errorResult($input, 'No example found. Ask about a topic first, for example "array ko sort kaise kare", then use /example.');
+            return $this->errorResult($input, 'No example found. Ask about a topic first, for example "how do I sort an array?", then use /example.');
         }
         $text = (string) $entry['title'] . "\n\n" . (string) $entry['code'];
         if (!empty($entry['output'])) {

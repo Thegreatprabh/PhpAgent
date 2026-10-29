@@ -10,14 +10,14 @@ require __DIR__ . '/src/PhpAgent.php';
 $agent = PhpAgent::create(__DIR__ . '/data');
 
 $questions = [
-    'array ko sort kaise kare',
+    'how do I sort an array?',
     'how to use password_hash and password_verify',
     'how do I connect to MySQL with PDO?',
-    'class kaise banaye',
-    'enum kaise banaye',
-    'file upload kaise kare',
+    'how do I create a class?',
+    'how do I create an enum?',
+    'how do I upload a file?',
     'how do I use preg_match?',
-    'session kaise banaye',
+    'how do I create a session?',
 ];
 
 foreach ($questions as $i => $question) {

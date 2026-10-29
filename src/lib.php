@@ -64,7 +64,7 @@ function php_agent_load(string $dataDir): array
     return $entries;
 }
 
-/** Lowercase, strip punctuation, collapse spaces. Hinglish stays as-is. */
+/** Lowercase, strip punctuation, collapse spaces. */
 function php_agent_normalize(string $text): string
 {
     $text = php_agent_lower($text);
@@ -74,36 +74,28 @@ function php_agent_normalize(string $text): string
 }
 
 /**
- * Hinglish / synonym expansion: each token also contributes its canonical
- * English equivalent, so "array me value kaise nikale" matches English
- * keywords like "get" as well as the Hinglish phrase itself.
+ * English synonym expansion: each token also contributes its canonical
+ * equivalent, so "how do I fetch a value" matches keywords like "get"
+ * as well as the phrase itself.
  * @return array<string, string> token => canonical token
  */
 function php_agent_synonyms(): array
 {
     return [
-        'banao' => 'create', 'banana' => 'create', 'banaye' => 'create', 'banaya' => 'create',
-        'nikalo' => 'get', 'nikale' => 'get', 'nikalna' => 'get', 'nikal' => 'get',
-        'le' => 'get', 'lena' => 'get',
-        'jodo' => 'add', 'jodna' => 'add', 'jod' => 'add',
-        'hatao' => 'remove', 'hatana' => 'remove', 'mitao' => 'delete',
-        'dikhao' => 'show', 'dikha' => 'show', 'dekho' => 'show',
-        'bhejo' => 'send', 'bhejna' => 'send',
-        'padho' => 'read', 'padhna' => 'read',
-        'likho' => 'write', 'likhna' => 'write',
-        'chalao' => 'run', 'chalana' => 'run',
-        'samjho' => 'explain', 'samjhao' => 'explain',
-        'badlo' => 'change', 'badalna' => 'change',
-        'daalo' => 'insert', 'bharo' => 'fill',
-        'dhoondho' => 'search', 'dhoondhna' => 'search', 'khojo' => 'search',
-        'galti' => 'error',
+        'create' => 'create', 'make' => 'create', 'build' => 'create',
+        'fetch' => 'get', 'retrieve' => 'get', 'obtain' => 'get',
+        'append' => 'add', 'insert' => 'add',
+        'display' => 'show', 'print' => 'show',
+        'execute' => 'run',
+        'find' => 'search', 'look' => 'search',
+        'mistake' => 'error',
     ];
 }
 
 /** Split a normalized query into tokens, dropping tiny stopwords. */
 function php_agent_tokens(string $normalized): array
 {
-    $stop = ['ka', 'ki', 'ko', 'me', 'se', 'pe', 'kya', 'hai', 'kese', 'kaise', 'karna', 'kare', 'karo', 'the', 'how', 'to', 'in', 'a', 'an', 'do', 'is', 'php', 'batao', 'bta', 'btao', 'chahiye', 'wala', 'wale', 'kr', 'krna'];
+    $stop = ['the', 'how', 'to', 'in', 'a', 'an', 'do', 'is', 'php', 'i', 'can', 'you', 'me', 'please', 'with', 'for', 'of', 'on', 'and', 'or', 'my', 'what', 'does', 'should'];
     $synonyms = php_agent_synonyms();
     $tokens = explode(' ', $normalized);
     $out = [];
@@ -126,7 +118,7 @@ function php_agent_score(array $entry, string $normalized, array $tokens): int
 {
     $score = 0;
 
-    // Exact PHP function name in the query, e.g. "array_map kaise use kare".
+    // Exact PHP function name in the query, e.g. "how do I use array_map".
     if (!empty($entry['functions']) && is_array($entry['functions'])) {
         foreach ($entry['functions'] as $fn) {
             if (in_array(php_agent_lower((string) $fn), $tokens, true)) {

@@ -9,8 +9,8 @@
       "array_shift",
       "array_unshift",
       "unset array",
-      "array me add karna",
-      "array se hatana",
+      "add to an array",
+      "remove from an array",
       "append array"
     ],
     "functions": [
@@ -40,7 +40,7 @@
       "is_array",
       "array_key_exists",
       "array check",
-      "array khali hai ya nahi"
+      "check if an array is empty"
     ],
     "functions": [
       "count",
@@ -120,8 +120,8 @@
       "in_array",
       "array_search",
       "array_column",
-      "array_merge kaise kare",
-      "array me value hai ya nahi",
+      "how to merge arrays",
+      "check if a value is in an array",
       "array search"
     ],
     "functions": [
@@ -152,7 +152,7 @@
       "asort",
       "ksort",
       "usort",
-      "array sort kaise kare",
+      "how to sort an array",
       "array sort",
       "sort by value"
     ],
@@ -185,8 +185,8 @@
       "associative array",
       "indexed array",
       "nested array",
-      "array kaise banaye",
-      "array me value kaise nikale",
+      "how to create an array",
+      "how to get a value from an array",
       "key value"
     ],
     "functions": [
@@ -215,7 +215,7 @@
       "array loop",
       "key value loop",
       "foreach key value",
-      "array ke har item par kaam"
+      "work on every array item"
     ],
     "functions": [],
     "answer": "foreach reads every item without managing an index. Use key => value when you need the key too. A & reference lets you change items in place, but you must unset the reference variable afterwards or it keeps pointing at the last item.",

@@ -9,7 +9,7 @@
       "database connect",
       "mysql connect pdo",
       "dsn",
-      "database connection kaise kare",
+      "how to connect to a database",
       "pdo mysql connect"
     ],
     "functions": [],
@@ -33,7 +33,7 @@
       "fetch_class",
       "fetchall",
       "fetch mode",
-      "pdo fetch kaise kare"
+      "how to fetch with pdo"
     ],
     "functions": [],
     "answer": "FETCH_ASSOC returns rows as arrays, FETCH_OBJ as objects, and FETCH_CLASS fills an object of your class. Set the default fetch mode once on the connection so every query behaves the same. This example is syntax-checked only because it needs a database.",
@@ -56,8 +56,10 @@
       "pdo delete",
       "lastinsertid",
       "rowcount",
-      "insert kaise kare pdo",
-      "update query pdo"
+      "how to insert with pdo",
+      "update query pdo",
+      "insert with pdo",
+      "insert data with pdo"
     ],
     "functions": [],
     "answer": "Use execute with an array of values for insert, update, and delete. lastInsertId returns the new auto-increment ID, and rowCount tells how many rows an update or delete changed. Wrap related writes in a transaction so they succeed or fail together. This example is syntax-checked only because it needs a database.",
@@ -78,8 +80,8 @@
       "pagination",
       "limit offset",
       "paginate",
-      "page wise data",
-      "pagination kaise kare",
+      "paginated data",
+      "how to do pagination",
       "limit offset pdo"
     ],
     "functions": [],
@@ -103,7 +105,10 @@
       "named placeholder",
       "positional placeholder",
       "bindparam",
-      "pdo query kaise kare"
+      "how to run a pdo query",
+      "prepare a pdo statement",
+      "prepared statement",
+      "pdo prepared statement"
     ],
     "functions": [],
     "answer": "Prepare once, execute with values. Named placeholders like :email read clearly, positional placeholders use ? in order. fetch returns one row, fetchAll returns all rows, and fetchColumn returns one value. This example is syntax-checked only because it needs a database.",
@@ -126,7 +131,7 @@
       "beginTransaction",
       "commit",
       "rollback",
-      "transaction kaise kare",
+      "how to use transactions",
       "atomic database"
     ],
     "functions": [],

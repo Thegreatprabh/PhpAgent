@@ -8,7 +8,7 @@
       "template",
       "template escaping",
       "blade syntax",
-      "template kaise banaye",
+      "how to create a template",
       "view template"
     ],
     "functions": [
@@ -34,7 +34,7 @@
       "eloquent style",
       "where orderby",
       "fluent query",
-      "eloquent kaise samjhe"
+      "understanding eloquent"
     ],
     "functions": [],
     "answer": "Eloquent-style code chains methods like where and orderBy to build a query, then get runs it. Underneath, it still becomes SQL with bound parameters. The plain-PDO version below shows exactly what the chain means, so the magic is never mysterious. This example is syntax-checked only because it needs a database and a $pdo object.",
@@ -55,7 +55,7 @@
       "middleware",
       "auth middleware",
       "request pipeline",
-      "middleware kaise banaye",
+      "how to create middleware",
       "middleware concept"
     ],
     "functions": [],
@@ -78,7 +78,7 @@
       "model view controller",
       "mvc pattern",
       "controller",
-      "mvc kaise banaye",
+      "how to build mvc",
       "mvc php"
     ],
     "functions": [],
@@ -100,7 +100,7 @@
       "routing",
       "router",
       "route",
-      "routing kaise banaye",
+      "how to create routing",
       "url routing",
       "route parameters"
     ],

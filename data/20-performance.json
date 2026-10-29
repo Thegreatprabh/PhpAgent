@@ -9,7 +9,7 @@
       "scheduled task",
       "cron job",
       "long task",
-      "cron kaise chalaye",
+      "how to run a cron job",
       "cli cron"
     ],
     "functions": [
@@ -33,7 +33,7 @@
       "deployment",
       "deploy",
       "production checklist",
-      "deploy kaise kare",
+      "how to deploy",
       "php version check",
       "production setup"
     ],
@@ -61,7 +61,7 @@
       "getenv",
       "dotenv",
       "secrets",
-      "config env kaise rakhe",
+      "how to keep config in env",
       "env file"
     ],
     "functions": [
@@ -111,7 +111,7 @@
       "opcache enable",
       "php performance",
       "bytecode cache",
-      "opcache kaise check kare"
+      "how to check opcache"
     ],
     "functions": [
       "opcache_get_status",

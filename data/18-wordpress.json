@@ -9,7 +9,7 @@
       "add_filter",
       "hooks",
       "wordpress hook",
-      "action filter kaise use kare"
+      "how to use actions and filters"
     ],
     "functions": [
       "add_action",
@@ -35,7 +35,7 @@
       "update_option",
       "get_posts",
       "wp_query",
-      "wordpress data kaise le"
+      "how to get wordpress data"
     ],
     "functions": [
       "get_option",
@@ -60,7 +60,7 @@
       "wordpress shortcode",
       "shortcode",
       "add_shortcode",
-      "shortcode kaise banaye"
+      "how to create a shortcode"
     ],
     "functions": [
       "add_shortcode",
@@ -86,7 +86,7 @@
       "the_title",
       "the_content",
       "have_posts",
-      "wordpress theme kaise banaye"
+      "how to create a wordpress theme"
     ],
     "functions": [
       "have_posts",

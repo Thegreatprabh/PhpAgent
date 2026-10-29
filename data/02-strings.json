@@ -9,8 +9,8 @@
       "single quotes",
       "double quotes",
       "concatenation",
-      "string jodna",
-      "string me variable kaise likhe"
+      "string concatenation",
+      "how to interpolate variables in a string"
     ],
     "functions": [],
     "answer": "Single-quoted strings print text exactly as written. Double-quoted strings replace $variables and interpret escape sequences like \\n. Join strings with the dot operator, never with +.",
@@ -33,7 +33,7 @@
       "string compare",
       "string comparison",
       "compare strings",
-      "string barabar hai ya nahi"
+      "check if strings are equal"
     ],
     "functions": [
       "strcmp",
@@ -60,7 +60,7 @@
       "format string",
       "number format",
       "price format",
-      "sprintf kaise use kare"
+      "how to use sprintf"
     ],
     "functions": [
       "sprintf",
@@ -94,7 +94,7 @@
       "string length",
       "string replace",
       "string ko todna",
-      "string trim kaise kare"
+      "how to trim a string"
     ],
     "functions": [
       "strlen",
@@ -126,7 +126,7 @@
       "variable in string",
       "curly braces string",
       "multiline string",
-      "heredoc kaise likhe"
+      "how to write a heredoc"
     ],
     "functions": [],
     "answer": "Wrap a variable in curly braces inside a double-quoted string when it touches other text. For long multi-line text, heredoc keeps the text readable without escaping quotes.",
@@ -146,18 +146,18 @@
     "keywords": [
       "unicode",
       "utf-8",
-      "hindi text",
+      "accented text",
       "multibyte",
       "mb_strlen",
       "emoji length",
-      "hindi string length"
+      "accented string length"
     ],
     "functions": [
       "mb_strlen",
       "mb_substr"
     ],
-    "answer": "PHP strings are byte sequences. strlen counts bytes, so Hindi text and emoji count as more than one per visible character. For character-accurate work, use the mbstring functions mb_strlen and mb_substr, and save files as UTF-8. This example is syntax-checked only because mbstring is an optional extension and may not be installed.",
-    "code": "$hindi = \"नमस्ते\";\necho strlen($hindi);      // bytes, not characters\necho mb_strlen($hindi);   // characters (needs mbstring extension)\necho mb_substr($hindi, 0, 3);\n",
+    "answer": "PHP strings are byte sequences. strlen counts bytes, so accented text and emoji count as more than one per visible character. For character-accurate work, use the mbstring functions mb_strlen and mb_substr, and save files as UTF-8. This example is syntax-checked only because mbstring is an optional extension and may not be installed.",
+    "code": "$word = \"café\";\necho strlen($word);      // bytes, not characters\necho mb_strlen($word);   // characters (needs mbstring extension)\necho mb_substr($word, 0, 3);\n",
     "output": null,
     "runnable": false,
     "pitfall": "Cutting a UTF-8 string with substr can split a character in half and produce broken output. Use mb_substr for user-facing text.",
@@ -175,9 +175,9 @@
       "str_contains",
       "str_starts_with",
       "str_ends_with",
-      "string me dhoondhna",
+      "search inside a string",
       "check string contains",
-      "string contains kaise check kare"
+      "how to check if a string contains text"
     ],
     "functions": [
       "strpos",

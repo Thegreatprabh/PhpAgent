@@ -2,7 +2,7 @@
 // PHP Agent - CLI entry point. No API, no network, no database by default.
 // Usage:
 //   php agent.php ask "how do I connect to MySQL with PDO?"
-//   php agent.php "array ko sort kaise kare"   (one-shot, ask is optional)
+//   php agent.php "how do I sort an array?"   (one-shot, ask is optional)
 //   php agent.php help | topics | search <words> | category:<name>
 //   php agent.php fn <name>                   (exhaustive function index)
 //   php agent.php /explain str_replace        (custom commands)

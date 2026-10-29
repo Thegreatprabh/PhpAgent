@@ -9,7 +9,7 @@
       "curl request",
       "fetch url",
       "http request",
-      "curl kaise use kare",
+      "how to use curl",
       "api call curl"
     ],
     "functions": [
@@ -38,7 +38,7 @@
       "post json",
       "send json api",
       "curl post data",
-      "api post kaise kare"
+      "how to post to an api"
     ],
     "functions": [
       "curl_init",
@@ -66,7 +66,7 @@
       "json error",
       "array to json",
       "json to array",
-      "json kaise banaye"
+      "how to create json"
     ],
     "functions": [
       "json_encode",
@@ -92,7 +92,7 @@
       "json response",
       "api response",
       "http status code",
-      "json api kaise banaye",
+      "how to build a json api",
       "api endpoint"
     ],
     "functions": [
@@ -120,7 +120,7 @@
       "read xml",
       "parse xml",
       "xml to array",
-      "xml kaise padhe"
+      "how to read xml"
     ],
     "functions": [
       "simplexml_load_string",

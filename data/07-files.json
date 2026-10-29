@@ -10,7 +10,7 @@
       "is_dir",
       "list files",
       "directory list",
-      "folder me files kaise dekhe"
+      "how to list files in a folder"
     ],
     "functions": [
       "scandir",
@@ -39,8 +39,8 @@
       "fgetcsv",
       "csv read",
       "line by line",
-      "file line by line kaise padhe",
-      "csv kaise padhe"
+      "how to read a file line by line",
+      "how to read a csv file"
     ],
     "functions": [
       "fopen",
@@ -68,8 +68,12 @@
       "file_put_contents",
       "read file",
       "write file",
-      "file read kaise kare",
-      "file write kaise kare"
+      "how to read a file",
+      "how to write a file",
+      "read a file",
+      "read a file in php",
+      "write a file",
+      "file reading"
     ],
     "functions": [
       "file_get_contents",
@@ -97,7 +101,9 @@
       "FILES",
       "move_uploaded_file",
       "upload validation",
-      "file upload kaise kare"
+      "how to upload a file",
+      "upload a file",
+      "upload a file in php"
     ],
     "functions": [
       "move_uploaded_file",
@@ -123,7 +129,7 @@
       "json_encode",
       "json_decode",
       "read json",
-      "config kaise padhe"
+      "how to read config"
     ],
     "functions": [
       "json_encode",

@@ -117,7 +117,7 @@ final class GeminiClient
     /** Build the generateContent payload. Testable without any network call. */
     public function buildPayload(string $prompt, string $groundingText): array
     {
-        $system = "You are a PHP expert answering in plain, practical language. Answer PHP questions only. "
+        $system = "You are a PHP expert answering in plain, practical English. Answer PHP questions only, in English. "
             . "Prefer the LOCAL DATA below over general knowledge. Never invent a function signature: use the injected signature, or say the signature is unknown. "
             . "Show a complete PHP code example and one common pitfall. If the topic is not in the local data, say so plainly.\n\nLOCAL DATA:\n" . $groundingText;
         return [

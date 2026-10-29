@@ -140,7 +140,7 @@ foreach ($commands as $command) {
     v2_check(str_starts_with((string) ($command['name'] ?? ''), '/'), 'command name starts with /: ' . (string) ($command['name'] ?? '?'));
     v2_check(str_contains((string) ($command['template'] ?? ''), '{query}'), 'command template has {query}: ' . (string) ($command['name'] ?? '?'));
 }
-$result = $agent->answer('/example array ko sort kaise kare');
+$result = $agent->answer('/example how do I sort an array?');
 v2_check($result['status'] === 'command' && ($result['entry']['id'] ?? '') === 'array-sort' && str_contains((string) ($result['text'] ?? ''), 'sort('), 'command: /example returns curated example');
 $result = $agent->answer('/compare sort vs asort');
 v2_check($result['status'] === 'command' && str_contains((string) ($result['text'] ?? ''), 'vs'), 'command: /compare side by side');
@@ -163,10 +163,10 @@ v2_check($badResult['status'] === 'command' && !empty($badResult['error']) && st
 @unlink($badFile);
 
 // ------------------------------------------------------- follow-ups
-$first = $agent->answer('array ko sort kaise kare');
+$first = $agent->answer('how do I sort an array?');
 $lastId = (string) ($first['entry']['id'] ?? '');
 v2_check($lastId === 'array-sort', 'follow-up setup: first answer is array-sort');
-foreach (['example', 'us ka example do', 'iska example', 'example dikhao'] as $followUp) {
+foreach (['example', 'show me an example', 'show example', 'tell me more'] as $followUp) {
     $follow = $agent->answer($followUp, $lastId);
     v2_check($follow['status'] === 'found' && ($follow['entry']['id'] ?? '') === 'array-sort', "follow-up: \"$followUp\" resolves to previous topic");
 }
@@ -243,11 +243,11 @@ v2_check($leaks === [], 'no key literal outside tests/', implode(',', $leaks));
 
 // ------------------------------------------------------- suggest engine
 $suggestCases = [
-    ['array ko sort kaise kare', 'curated'],
+    ['how do I sort an array?', 'curated'],
     ['how do I use str_replace', 'function'],
     ['str_replace', 'function'],
     ['password hash', 'curated'],
-    ['session kaise banaye', 'curated'],
+    ['how do I create a session?', 'curated'],
     ['/ex', 'command'],
     ['/fn', 'command'],
     ['echo', 'construct'],
@@ -277,9 +277,9 @@ $fetch = function (string $path) use ($scheme, $serverPort): string {
     $result = @file_get_contents($scheme . '127.0.0.1:' . $serverPort . $path, false, $ctx);
     return is_string($result) ? $result : '';
 };
-$suggestJson = $fetch('/suggest.php?q=' . rawurlencode('array ko sort kaise kare'));
+$suggestJson = $fetch('/suggest.php?q=' . rawurlencode('how do I sort an array?'));
 $suggestData = json_decode($suggestJson, true);
-v2_check(is_array($suggestData) && !empty($suggestData['suggestions']), 'suggest endpoint: returns suggestions for Hinglish query', substr($suggestJson, 0, 200));
+v2_check(is_array($suggestData) && !empty($suggestData['suggestions']), 'suggest endpoint: returns suggestions for an English query', substr($suggestJson, 0, 200));
 v2_check(str_contains($suggestJson, 'Sorting arrays'), 'suggest endpoint: top suggestion is the sort entry');
 $suggestFnJson = $fetch('/suggest.php?q=' . rawurlencode('str_replace'));
 $suggestFnData = json_decode($suggestFnJson, true);
@@ -288,19 +288,19 @@ v2_check(in_array('function', $kindsFn, true), 'suggest endpoint: function name 
 $emptyJson = $fetch('/suggest.php?q=');
 v2_check($emptyJson === '{"suggestions":[]}', 'suggest endpoint: empty query returns empty list', $emptyJson);
 // Index page: search UI, chips, no external assets, XSS escaped.
-$indexHtml = $fetch('/index.php?q=' . rawurlencode('array ko sort kaise kare'));
+$indexHtml = $fetch('/index.php?q=' . rawurlencode('how do I sort an array?'));
 v2_check(str_contains($indexHtml, 'Sorting arrays') && str_contains($indexHtml, 'ask-box') && str_contains($indexHtml, 'suggest-box'), 'index page: search box + suggestions + answer rendered');
 $xssHtml = $fetch('/index.php?q=' . rawurlencode('<script>alert(1)</script>'));
 v2_check(!str_contains($xssHtml, '<script>alert(1)</script>') && str_contains($xssHtml, '&lt;script&gt;'), 'index page: query is escaped (XSS probe)');
 // AI page in Gemini mode without a key shows setup, not a crash.
-$aiHtml = $fetch('/ai.php?mode=gemini&q=' . rawurlencode('array ko sort kaise kare'));
+$aiHtml = $fetch('/ai.php?mode=gemini&q=' . rawurlencode('how do I sort an array?'));
 v2_check(str_contains($aiHtml, 'Gemini is not configured yet') && str_contains($aiHtml, 'Sorting arrays'), 'ai page: gemini-without-key shows setup + local answer');
 // Session memory: same cookie jar, ask a topic, then "example".
 $cookieJar = tempnam(sys_get_temp_dir(), 'phpagent_cookies_');
 $curlBin = trim((string) shell_exec('command -v curl'));
 if ($curlBin !== '') {
     $first = [];
-    exec(escapeshellarg($curlBin) . ' -s -c ' . escapeshellarg($cookieJar) . ' ' . escapeshellarg($scheme . '127.0.0.1:' . $serverPort . '/ai.php?q=' . rawurlencode('array ko sort kaise kare')), $first);
+    exec(escapeshellarg($curlBin) . ' -s -c ' . escapeshellarg($cookieJar) . ' ' . escapeshellarg($scheme . '127.0.0.1:' . $serverPort . '/ai.php?q=' . rawurlencode('how do I sort an array?')), $first);
     $second = [];
     exec(escapeshellarg($curlBin) . ' -s -b ' . escapeshellarg($cookieJar) . ' ' . escapeshellarg($scheme . '127.0.0.1:' . $serverPort . '/ai.php?q=' . rawurlencode('example')), $second);
     $secondHtml = implode("\n", $second);
@@ -331,6 +331,30 @@ v2_check($demoCode === 0 && $demoQuestions >= 8, 'demo.php still works (8 questi
 v2_check($cliCode === 0 && str_contains($cliOut, 'Signature:'), 'CLI: fn lookup works', $cliOut);
 [$cliCode2, $cliOut2] = v2_run(escapeshellarg($phpBin) . ' ' . escapeshellarg($root . '/agent.php') . ' ai ' . escapeshellarg('how do I sort an array?'));
 v2_check($cliCode2 === 0 && str_contains($cliOut2, 'No Gemini API key'), 'CLI: ai without key gives setup message', $cliOut2);
+
+// ------------------------------------------------------- English only
+// No Hinglish marker word may appear in user-facing data or code.
+// (tests/ is excluded: this check's own marker list lives here.)
+$markers = ['kaise', 'kare', 'karna', 'karo', 'kya', 'banaye', 'banaya', 'banao', 'nikale', 'nikalo', 'jodo', 'jodna', 'likhe', 'likhna', 'padhe', 'padhna', 'chalaye', 'samjhe', 'batao', 'dikhao', 'dikhana', 'lena', 'dena', 'hatana', 'fenkna', 'rokna', 'pehla', 'apna', 'shart', 'agar', 'dohrao', 'aaj', 'khali', 'chahiye', 'wala', 'wale', 'hota', 'hote', 'hain', 'hai', 'jata', 'jate', 'raha', 'rahe', 'dikhta', 'hoga', 'karke', 'liye', 'baad', 'pehle', 'jab', 'phir', 'abhi', 'kuch', 'aisa', 'kyunki', 'lekin', 'alag', 'andar', 'bahar', 'upar', 'neeche', 'bina', 'saath', 'galat', 'sahi', 'hamesha', 'sirf', 'mein', 'kese', 'krna', 'bta', 'hinglish', 'dhyaan'];
+$scanFiles = array_merge(
+    glob($root . '/data/[0-9]*.json') ?: [],
+    glob($root . '/data/language-constructs.json') ?: [],
+    glob($root . '/data/custom-commands.json') ?: [],
+    glob($root . '/src/*.php') ?: [],
+    glob($root . '/public/*.php') ?: [],
+    glob($root . '/tools/*.php') ?: [],
+    glob($root . '/config/*.php') ?: [],
+    [$root . '/agent.php', $root . '/demo.php', $root . '/index.php', $root . '/setup-gemini.php', $root . '/README.md']
+);
+$pattern = '/\\b(' . implode('|', $markers) . ')\\b/i';
+$hinglishHits = [];
+foreach ($scanFiles as $scanFile) {
+    $contents = (string) file_get_contents($scanFile);
+    if (preg_match_all($pattern, $contents, $m) > 0) {
+        $hinglishHits[] = basename($scanFile) . ': ' . implode(', ', array_unique(array_map('strtolower', $m[0])));
+    }
+}
+v2_check($hinglishHits === [], 'English only: no Hinglish marker word in data/code/docs', implode(' | ', $hinglishHits));
 
 // Confidence labels in plain words.
 v2_check(php_agent_confidence_label(100) === 'Exact', 'confidence label: 100 -> Exact');

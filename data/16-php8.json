@@ -8,7 +8,7 @@
       "attribute",
       "annotation",
       "#[",
-      "attribute kaise use kare",
+      "how to use attributes",
       "metadata attribute"
     ],
     "functions": [],
@@ -31,7 +31,7 @@
       "fibers",
       "cooperative",
       "fiber suspend",
-      "fiber kaise use kare",
+      "how to use fibers",
       "async fiber"
     ],
     "functions": [],
@@ -53,7 +53,7 @@
       "match",
       "match expression",
       "match vs switch",
-      "match kaise use kare",
+      "how to use match",
       "match php 8"
     ],
     "functions": [],
@@ -75,7 +75,10 @@
       "named arguments",
       "named parameters",
       "call by name",
-      "named argument kaise use kare"
+      "how to use named arguments",
+      "named argument",
+      "call a function by parameter name",
+      "use named arguments"
     ],
     "functions": [],
     "answer": "Named arguments pass values by parameter name instead of position, so calls with many optional settings stay readable and order-independent. They also make it safe to skip optional parameters in the middle.",
@@ -97,7 +100,7 @@
       "??=",
       "throw expression",
       "null coalescing",
-      "??= kaise use kare"
+      "how to use null coalescing assignment"
     ],
     "functions": [],
     "answer": "??= assigns a value only when the variable is missing or null, which is ideal for defaults. Since PHP 8, throw can be used as an expression inside ??, ternary, and arrow functions, so validation stays in one line.",
@@ -141,7 +144,7 @@
       "readonly",
       "readonly property",
       "immutable",
-      "readonly kaise use kare",
+      "how to use readonly properties",
       "final property"
     ],
     "functions": [],
@@ -164,8 +167,11 @@
       "mixed type",
       "nullable type",
       "int|string",
-      "union type kaise likhe",
-      "type declarations"
+      "how to write union types",
+      "type declarations",
+      "write a union type",
+      "union type",
+      "union type declaration"
     ],
     "functions": [],
     "answer": "Union types accept several types, written with |. ?Type is short for Type|null. mixed accepts anything, including null, and is the explicit way to say no type check applies. Prefer the narrowest type that is honest, and reserve mixed for genuinely untyped data.",

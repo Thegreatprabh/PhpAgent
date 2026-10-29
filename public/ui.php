@@ -75,9 +75,9 @@ function php_agent_ui_search_form(PhpAgent $agent, string $query, string $action
         echo '</div>';
     }
     echo '<div class="search-wrap">';
-    echo '<input type="text" name="q" id="ask-box" value="' . php_agent_e($query) . '" placeholder="Ask anything in PHP, e.g. array ko sort kaise kare" aria-label="Ask a PHP question">';
+    echo '<input type="text" name="q" id="ask-box" value="' . php_agent_e($query) . '" placeholder="Ask anything in PHP, e.g. how do I sort an array?" aria-label="Ask a PHP question">';
     echo '<div class="suggest-box" id="suggest-box" role="listbox"></div>';
-    echo '<button class="go" type="submit">Batao</button>';
+    echo '<button class="go" type="submit">Ask</button>';
     echo '</div></form>';
     echo '<div class="chips" style="justify-content:flex-start"><span style="font-size:.9rem;color:#6b7280">Recent:</span><span id="recent-chips"></span>';
     echo '<span style="font-size:.9rem;color:#6b7280;margin-left:.6rem">Pinned:</span><span id="pinned-chips"></span>';

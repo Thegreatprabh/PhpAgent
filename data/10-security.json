@@ -7,7 +7,7 @@
       "csrf",
       "csrf token",
       "cross site request forgery",
-      "csrf token kaise banaye",
+      "how to create a csrf token",
       "form token"
     ],
     "functions": [
@@ -32,7 +32,7 @@
       "password_hash",
       "password_verify",
       "hash password",
-      "password store kaise kare",
+      "how to store passwords",
       "login password check",
       "password_needs_rehash"
     ],
@@ -87,7 +87,7 @@
       "csp",
       "hsts",
       "x-frame-options",
-      "security headers kaise lagaye"
+      "how to set security headers"
     ],
     "functions": [
       "header"
@@ -111,8 +111,8 @@
       "prepared statement",
       "bindparam",
       "bindvalue",
-      "sql injection se bachao",
-      "query secure kaise kare"
+      "prevent sql injection",
+      "how to make a query secure"
     ],
     "functions": [],
     "answer": "SQL injection happens when user input is glued into a query string. Prepared statements send the query and the data separately, so input can never change the query structure. Never build SQL by concatenating variables, even after escaping. This example is syntax-checked only because it needs a database.",
@@ -135,7 +135,7 @@
       "htmlspecialchars",
       "escape output",
       "script injection",
-      "xss se bachao"
+      "prevent xss"
     ],
     "functions": [
       "htmlspecialchars",

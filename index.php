@@ -31,14 +31,14 @@ button { padding: .6rem 1rem; font-size: 1rem; }
 <h1>PHP Agent</h1>
 <p>Offline PHP expert. No API, no account. <?php echo count($entries); ?> pre-decided topics.</p>
 <form method="get" action="">
-  <input type="text" name="q" value="<?php echo htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); ?>" placeholder="e.g. array ko sort kaise kare" autofocus>
-  <button type="submit">Batao</button>
+  <input type="text" name="q" value="<?php echo htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); ?>" placeholder="e.g. how do I sort an array?" autofocus>
+  <button type="submit">Ask</button>
 </form>
 <?php if ($result !== null): ?>
   <?php if ($result['entry'] === null): ?>
-    <p><strong>Ye exact topic abhi knowledge base me nahi hai.</strong> Guess karke galat code nahi diya gaya.</p>
+    <p><strong>This exact topic is not in the knowledge base yet.</strong> No guessed code was given.</p>
     <?php if ($result['suggestions'] !== []): ?>
-      <p>Sabse kareeb topics:</p>
+      <p>Closest topics:</p>
       <ul>
       <?php foreach ($result['suggestions'] as $s): ?>
         <li><a href="?q=<?php echo urlencode($s['title']); ?>"><?php echo htmlspecialchars($s['title'], ENT_QUOTES, 'UTF-8'); ?></a></li>
@@ -50,7 +50,7 @@ button { padding: .6rem 1rem; font-size: 1rem; }
     <p><?php echo htmlspecialchars($e['answer'], ENT_QUOTES, 'UTF-8'); ?></p>
     <pre><?php echo htmlspecialchars($e['code'], ENT_QUOTES, 'UTF-8'); ?></pre>
     <?php if (!empty($e['pitfall'])): ?>
-      <p class="pitfall"><strong>Dhyaan rakho:</strong> <?php echo htmlspecialchars($e['pitfall'], ENT_QUOTES, 'UTF-8'); ?></p>
+      <p class="pitfall"><strong>Watch out:</strong> <?php echo htmlspecialchars($e['pitfall'], ENT_QUOTES, 'UTF-8'); ?></p>
     <?php endif; ?>
     <?php $related = !empty($e['related']) ? php_agent_by_ids($entries, $e['related']) : []; ?>
     <?php if ($related !== []): ?>

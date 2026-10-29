@@ -93,7 +93,7 @@ final class PhpAgent
                 'score' => 0,
                 'suggestions' => [],
                 'query' => $question,
-                'help' => 'Ask any PHP question in English or Hinglish, for example "how do I sort an array?" or "array ko sort kaise kare". Commands: help, topics, search <words>, category:<name>, fn <name>, /explain, /example, /compare, /debug, /cheat, /fn. Type exit to quit the interactive loop.',
+                'help' => 'Ask any PHP question in English, for example "how do I sort an array?". Commands: help, topics, search <words>, category:<name>, fn <name>, /explain, /example, /compare, /debug, /cheat, /fn. Type exit to quit the interactive loop.',
             ];
         }
 
@@ -108,8 +108,8 @@ final class PhpAgent
             ];
         }
 
-        // Follow-up against the previous topic: "example", "us ka example do",
-        // "iska example", "aur batao". Needs the caller's remembered topic id.
+        // Follow-up against the previous topic: "example", "show me an example",
+        // "tell me more". Needs the caller's remembered topic id.
         if ($contextId !== null && $this->isFollowUp($lower)) {
             $entry = $this->entryById($contextId);
             if ($entry !== null) {
@@ -230,12 +230,9 @@ final class PhpAgent
     {
         $normalized = php_agent_normalize($lower);
         $followUps = [
-            'example', 'example do', 'example dikhao', 'example batao',
-            'us ka example do', 'uska example do', 'us ka example',
-            'uska example', 'iska example do', 'is ka example do',
-            'is ka example', 'iska example', 'aur batao', 'aur',
-            'uske bare me', 'iske bare me', 'uske bare me batao',
-            'example chahiye', 'code dikhao', 'code do',
+            'example', 'show me an example', 'show example', 'give an example',
+            'show me the code', 'show the code', 'show code', 'code',
+            'tell me more', 'more', 'explain more', 'go on',
         ];
         return in_array($normalized, $followUps, true);
     }

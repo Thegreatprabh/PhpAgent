@@ -1,9 +1,10 @@
 # PHP Agent
 
-An offline PHP expert, written in PHP itself. Ask a question in English or
-Hinglish, get a short explanation and a complete, runnable PHP code
+An offline PHP expert, written in PHP itself. Ask a question in English,
+get a short explanation and a complete, runnable PHP code
 example — from a pre-decided local knowledge base, with no account and no
-key required. An optional AI box (localhost only) adds Gemini answers
+key required. English only: all questions, answers, keywords, and UI text
+are in English. An optional AI box (localhost only) adds Gemini answers
 grounded in the same local data, using your own free API key.
 
 Local mode makes **no network calls at all**. The only network call in the
@@ -67,7 +68,7 @@ php -v
 ```bash
 # One question (CLI). `ask` is optional.
 php agent.php ask "how do I connect to MySQL with PDO?"
-php agent.php "array ko sort kaise kare"
+php agent.php "how do I sort an array?"
 
 # Interactive chat loop (type exit to quit). It remembers the last topic,
 # so "example" after a question shows that topic's example.
@@ -83,7 +84,7 @@ php agent.php topics
 php agent.php search password hash
 php agent.php category:Security
 php agent.php /explain str_replace
-php agent.php /example "array ko sort kaise kare"
+php agent.php /example "how do I sort an array?"
 php agent.php /compare sort vs asort
 php agent.php /debug "headers already sent"
 php agent.php /cheat Arrays
@@ -147,11 +148,11 @@ in the UI: Exact (score >= 100), Close (>= 25), Related (> 0).
 ## How matching works
 
 1. The question is normalised (lowercased, punctuation stripped) and split
-   into tokens. Hinglish synonyms are expanded (`nikalo` → `get`,
-   `banao` → `create`, `jodo` → `add`, and others), so romanised questions
-   match English keywords.
+   into tokens. English synonyms are expanded (`fetch` → `get`,
+   `make` → `create`, `append` → `add`, and others), so differently
+   worded questions match the same keywords.
 2. Every entry is scored: an exact PHP function name in the question scores
-   highest, then whole-word keyword phrases (English and Hinglish), then
+   highest, then whole-word keyword phrases, then
    title words (including shared stems such as `prepare`/`prepared`), then a
    fuzzy fallback for near-misses on function names and titles.
 3. A match needs a score of at least 25. Below that, the agent reports the
@@ -271,8 +272,8 @@ have a Copy button.
 Memory, fully local:
 
 - **Server session (PHP `$_SESSION`):** the conversation history and the
-  last topic are remembered, so follow-ups like "example", "us ka
-  example do", or "aur batao" resolve against the previous topic, on
+  last topic are remembered, so follow-ups like "example", "show me an
+  example", or "tell me more" resolve against the previous topic, on
   both pages and in the CLI interactive loop.
 - **Browser localStorage (localhost only, nothing leaves the machine):**
   recent searches and pinned topics are remembered and shown as Recent
@@ -308,8 +309,7 @@ Memory, fully local:
 | Composer & Autoloading | 3 |
 | MySQLi | 2 |
 
-Each entry has an `id`, `title`, `category`, `keywords` (including
-Hinglish/romanised phrasing), `functions`, a short plain-English
+Each entry has an `id`, `title`, `category`, `keywords` (English phrases), `functions`, a short plain-English
 `answer`, a complete `code` example, the expected `output` where the
 example produces one, a `runnable` flag, a common-mistake `pitfall`, and
 `related` entry ids. Entries marked `runnable: false` need a database,
@@ -330,15 +330,15 @@ fixes for the most common PHP errors.
 
 ```text
 how do I connect to MySQL with PDO?
-array ko sort kaise kare
-array me value kaise nikale
+how do I sort an array?
+how do I get a value from an array?
 how do I use str_replace in PHP?
 how to use password_hash and password_verify
-session kaise banaye
+how do I create a session?
 how do I prevent XSS in PHP?
-csrf token kaise banaye
-match kaise use kare
-enum kaise banaye
+how do I create a csrf token?
+how do I use match in PHP?
+how do I create an enum?
 fn str_replace
 /compare sort vs asort
 /debug headers already sent
@@ -400,7 +400,7 @@ file in `data/` (or a new `data/NN-name.json` file):
   "id": "example-topic",
   "title": "Example topic",
   "category": "Basics",
-  "keywords": ["example", "udahaaran kaise kare"],
+  "keywords": ["example", "how to show an example"],
   "functions": ["example_fn"],
   "answer": "Short explanation in simple words.",
   "code": "echo \"example\";\n",
@@ -418,7 +418,7 @@ Rules for new entries:
   `"runnable": true` and set `output` to its exact output. If it needs a
   database, server, or framework, set `"runnable": false` and
   `"output": null` — it will be syntax-checked only.
-- Include Hinglish/romanised keywords when beginners would ask that way.
+- Include English keywords covering how a beginner would phrase the question.
 - `related` ids must already exist.
 - To cover a new built-in function, re-run the generator instead of
   hand-writing an index entry: `php tools/generate-function-index.php`.

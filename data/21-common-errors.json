@@ -79,7 +79,7 @@
       "syntax error",
       "unexpected token",
       "parse error fix",
-      "syntax error kaise fix kare"
+      "how to fix a syntax error"
     ],
     "functions": [],
     "answer": "A parse error names the token PHP did not expect, but the real mistake is usually on the line above: a missing semicolon, an unclosed bracket, or a quote that never closed. Read upward from the reported line, and run php -l on the file to confirm the fix.",

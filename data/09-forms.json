@@ -9,7 +9,7 @@
       "select",
       "multiple select",
       "checkbox value",
-      "form checkbox kaise le"
+      "how to read a form checkbox"
     ],
     "functions": [],
     "answer": "An unchecked checkbox sends nothing at all, so always read it with ??. Name a group of checkboxes with [] to receive them as an array. A select list sends the value of the chosen option, not its label.",
@@ -32,7 +32,7 @@
       "double submit",
       "refresh resubmit",
       "header location",
-      "form resubmit rokna"
+      "prevent form resubmission"
     ],
     "functions": [
       "header"
@@ -56,9 +56,12 @@
       "POST form",
       "form data",
       "form submit",
-      "form se data kaise le",
+      "how to get data from a form",
       "form handling",
-      "GET POST form"
+      "GET POST form",
+      "data from a form",
+      "get form data",
+      "read form data"
     ],
     "functions": [],
     "answer": "Use GET for searches and shareable links, and POST for actions that change data. Read submitted values from $_POST with ?? defaults, trim them, and check they exist before use. This example is syntax-checked only because it needs a real form submission.",
@@ -83,7 +86,7 @@
       "validate email",
       "required field",
       "form validation",
-      "input validate kaise kare"
+      "how to validate input"
     ],
     "functions": [
       "filter_var",

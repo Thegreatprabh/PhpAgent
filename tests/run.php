@@ -137,51 +137,51 @@ foreach ($phpFiles as $file) {
 // ---------------------------------------------------------------- matcher
 $cases = [
     ['how do I connect to MySQL with PDO?', 'pdo-connect'],
-    ['array ko sort kaise kare', 'array-sort'],
-    ['array me value kaise nikale', 'arrays-basics'],
+    ['how do I sort an array?', 'array-sort'],
+    ['how do I get a value from an array?', 'arrays-basics'],
     ['how do I use str_replace in PHP?', 'string-functions'],
     ['how to check string contains in PHP using str_contains', 'string-search'],
     ['how to use password_hash and password_verify', 'password-verify'],
-    ['session kaise banaye', 'sessions'],
-    ['cookie kaise set kare', 'cookies'],
+    ['how do I create a session?', 'sessions'],
+    ['how do I set a cookie?', 'cookies'],
     ['how do I prevent XSS in PHP?', 'xss-prevention'],
     ['how do I prevent SQL injection?', 'sql-injection-prevention'],
-    ['csrf token kaise banaye', 'csrf-protection'],
+    ['how do I create a csrf token?', 'csrf-protection'],
     ['how do I make a cURL GET request?', 'curl-get'],
     ['how do I use json_encode in PHP?', 'json-encode-decode'],
     ['how do I use preg_match?', 'regex-basics'],
-    ['class kaise banaye', 'class-object'],
-    ['inheritance kaise kare', 'inheritance'],
-    ['trait kaise use kare', 'traits'],
-    ['enum kaise banaye', 'enums-php8'],
-    ['match kaise use kare', 'match-expression-php8'],
-    ['named argument kaise use kare', 'named-arguments'],
-    ['readonly property kaise use kare', 'readonly-properties'],
-    ['attribute kaise use kare', 'attributes-php8'],
-    ['fiber kaise use kare', 'fibers-intro'],
-    ['file read kaise kare', 'file-read-write'],
-    ['file upload kaise kare', 'file-uploads'],
-    ['form se data kaise le', 'get-post-forms'],
-    ['form validation kaise kare', 'validation-sanitization'],
-    ['pdo prepare kaise kare', 'pdo-prepared-statements'],
-    ['insert kaise kare pdo', 'pdo-insert-update'],
-    ['mysqli kaise use kare', 'mysqli-basics'],
-    ['composer kaise use kare', 'composer-autoload'],
-    ['psr-4 autoloading kaise banaye', 'psr4-autoloading'],
-    ['wordpress hook kaise use kare', 'wordpress-hooks'],
-    ['phpunit test kaise likhe', 'phpunit-concepts'],
-    ['opcache kaise check kare', 'opcache-performance'],
-    ['deploy kaise kare', 'deployment-checklist'],
-    ['headers already sent error kaise fix kare', 'error-headers-sent'],
-    ['undefined array key error kaise fix kare', 'error-undefined-index'],
-    ['strlen kaise use kare', 'string-functions'],
-    ['array_map kaise use kare', 'array-map-filter'],
-    ['union type kaise likhe', 'union-types'],
-    ['nullsafe operator kaise use kare', 'nullsafe-operator'],
-    ['routing kaise banaye', 'routing-plain-php'],
-    ['closure kaise banaye', 'closures-callbacks'],
-    ['superglobal kya hai aur kaise use kare', 'superglobals'],
-    ['date format kaise kare', 'date-time'],
+    ['how do I create a class?', 'class-object'],
+    ['how do I use inheritance in PHP?', 'inheritance'],
+    ['how do I use traits in PHP?', 'traits'],
+    ['how do I create an enum?', 'enums-php8'],
+    ['how do I use match in PHP?', 'match-expression-php8'],
+    ['how do I use named arguments?', 'named-arguments'],
+    ['how do I use readonly properties?', 'readonly-properties'],
+    ['how do I use attributes in PHP?', 'attributes-php8'],
+    ['how do I use fibers in PHP?', 'fibers-intro'],
+    ['how do I read a file in PHP?', 'file-read-write'],
+    ['how do I upload a file in PHP?', 'file-uploads'],
+    ['how do I get data from a form?', 'get-post-forms'],
+    ['how do I validate form input?', 'validation-sanitization'],
+    ['how do I prepare a PDO statement?', 'pdo-prepared-statements'],
+    ['how do I insert with PDO?', 'pdo-insert-update'],
+    ['how do I use mysqli?', 'mysqli-basics'],
+    ['how do I use composer?', 'composer-autoload'],
+    ['how do I set up PSR-4 autoloading?', 'psr4-autoloading'],
+    ['how do I use WordPress hooks?', 'wordpress-hooks'],
+    ['how do I write a PHPUnit test?', 'phpunit-concepts'],
+    ['how do I check OPcache?', 'opcache-performance'],
+    ['how do I deploy a PHP app?', 'deployment-checklist'],
+    ['how do I fix headers already sent error?', 'error-headers-sent'],
+    ['how do I fix undefined array key error?', 'error-undefined-index'],
+    ['how do I use strlen?', 'string-functions'],
+    ['how do I use array_map?', 'array-map-filter'],
+    ['how do I write a union type?', 'union-types'],
+    ['how do I use the nullsafe operator?', 'nullsafe-operator'],
+    ['how do I create routing in plain PHP?', 'routing-plain-php'],
+    ['how to create a closure?', 'closures-callbacks'],
+    ['what is a superglobal and how do I use it?', 'superglobals'],
+    ['how do I format a date in PHP?', 'date-time'],
 ];
 foreach ($cases as [$query, $expected]) {
     $result = $agent->answer($query);
@@ -197,8 +197,8 @@ foreach (['how do I train a neural network in PHP?', 'how to build a rocket in P
 }
 
 // Determinism: same input, same output.
-$a = $agent->answer('array ko sort kaise kare');
-$b = $agent->answer('array ko sort kaise kare');
+$a = $agent->answer('how do I sort an array?');
+$b = $agent->answer('how do I sort an array?');
 check($a['entry']['id'] === $b['entry']['id'] && $a['score'] === $b['score'], 'matcher deterministic');
 
 // ------------------------------------------------------------- commands
@@ -218,7 +218,7 @@ $searchTop = $agent->search('pdo connect');
 check(($searchTop[0]['id'] ?? '') === 'pdo-connect', 'library search top hit: pdo connect');
 
 // ------------------------------------------------------------- CLI one-shot
-[$cliCode, $cliOut] = kb_run(escapeshellarg($phpBin) . ' ' . escapeshellarg($root . '/agent.php') . ' ask ' . escapeshellarg('array ko sort kaise kare'));
+[$cliCode, $cliOut] = kb_run(escapeshellarg($phpBin) . ' ' . escapeshellarg($root . '/agent.php') . ' ask ' . escapeshellarg('how do I sort an array?'));
 check($cliCode === 0 && str_contains($cliOut, 'Sorting arrays'), 'CLI one-shot works', $cliOut);
 [$cliCode2, $cliOut2] = kb_run(escapeshellarg($phpBin) . ' ' . escapeshellarg($root . '/agent.php') . ' ' . escapeshellarg('how do I train a neural network in PHP?'));
 check($cliCode2 === 0 && str_contains($cliOut2, 'not in the knowledge base yet'), 'CLI unknown question honest', $cliOut2);

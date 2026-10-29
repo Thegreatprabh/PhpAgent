@@ -8,7 +8,7 @@
       "arrow functions",
       "fn syntax",
       "short closure",
-      "arrow function kaise likhe"
+      "how to write an arrow function"
     ],
     "functions": [],
     "answer": "Arrow functions are one-expression closures written with fn. They capture variables from the surrounding scope automatically, by value. They cannot contain multiple statements, so anything longer than one expression needs a full closure.",
@@ -30,8 +30,8 @@
       "closures",
       "callback",
       "anonymous function",
-      "use variable closure",
-      "closure kaise banaye"
+      "use variables in a closure",
+      "how to create a closure"
     ],
     "functions": [],
     "answer": "A closure is a function without a name, stored in a variable. It cannot see outside variables unless you list them in use(). Since PHP 7.4, arrow functions capture outside variables automatically, by value.",
@@ -54,7 +54,7 @@
       "named arguments",
       "variable arguments",
       "spread function",
-      "func_get_args kaise use kare"
+      "how to use func_get_args"
     ],
     "functions": [
       "func_get_args"

@@ -8,8 +8,8 @@
       "cookies",
       "setcookie",
       "COOKIE",
-      "cookie kaise set kare",
-      "remember me cookie"
+      "how to set a cookie",
+      "remember-me cookie"
     ],
     "functions": [
       "setcookie"
@@ -35,7 +35,7 @@
       "REMOTE_ADDR",
       "HTTP_USER_AGENT",
       "request info",
-      "current url kaise nikale"
+      "how to get the current url"
     ],
     "functions": [],
     "answer": "$_SERVER['REQUEST_METHOD'] tells you GET or POST, REQUEST_URI gives the requested path, and REMOTE_ADDR gives the client IP. Build the current URL from the host and URI, but never trust the Host header for security decisions, because the client controls it.",
@@ -58,7 +58,7 @@
       "SESSION",
       "session_start",
       "login session",
-      "session kaise banaye",
+      "how to create a session",
       "session destroy"
     ],
     "functions": [
@@ -87,7 +87,7 @@
       "SERVER",
       "REQUEST",
       "ENV",
-      "superglobal kya hai",
+      "what is a superglobal",
       "GET POST difference"
     ],
     "functions": [],

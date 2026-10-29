@@ -9,7 +9,7 @@
       "composer require",
       "autoload",
       "vendor autoload",
-      "composer kaise use kare",
+      "how to use composer",
       "package install"
     ],
     "functions": [],
@@ -57,7 +57,7 @@
       "autoloading",
       "autoload psr-4",
       "namespace folder mapping",
-      "autoload kaise banaye"
+      "how to set up autoloading"
     ],
     "functions": [
       "spl_autoload_register"

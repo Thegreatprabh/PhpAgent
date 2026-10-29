@@ -10,8 +10,8 @@
       "constructor",
       "method",
       "property",
-      "class kaise banaye",
-      "object kaise banaye"
+      "how to create a class",
+      "how to create an object"
     ],
     "functions": [],
     "answer": "A class is a blueprint. new creates an object from it. The constructor runs when the object is created and usually stores the starting values. Inside the class, $this refers to the current object, and -> reads its properties and calls its methods.",
@@ -32,7 +32,7 @@
       "enum",
       "enums",
       "backed enum",
-      "enum kaise banaye",
+      "how to create an enum",
       "fixed values",
       "order status enum"
     ],
@@ -58,7 +58,7 @@
       "child class",
       "override",
       "parent::",
-      "inheritance kaise kare"
+      "how to use inheritance"
     ],
     "functions": [],
     "answer": "A child class extends a parent and inherits its public and protected members. It can override a method with its own version and still call the parent version with parent::. A child must respect the parent method signature.",
@@ -81,7 +81,7 @@
       "implements",
       "abstract method",
       "contract",
-      "interface kaise banaye"
+      "how to create an interface"
     ],
     "functions": [],
     "answer": "An interface lists methods a class must provide, without saying how. An abstract class can mix finished methods with unfinished ones that children must complete. Program against the interface so implementations can be swapped without changing the code that uses them.",
@@ -105,7 +105,7 @@
       "__toString",
       "__call",
       "__construct",
-      "magic method kaise use kare"
+      "how to use magic methods"
     ],
     "functions": [],
     "answer": "Magic methods run automatically in special situations: __get and __set intercept access to missing or inaccessible properties, __toString controls how an object prints, and __call catches calls to missing methods. They are powerful, but overusing them hides what a class really does.",
@@ -126,7 +126,7 @@
       "namespace",
       "namespaces",
       "use statement",
-      "namespace kaise use kare",
+      "how to use namespaces",
       "class collision"
     ],
     "functions": [],
@@ -150,7 +150,7 @@
       "static property",
       "self::",
       "static::",
-      "static kaise use kare"
+      "how to use static"
     ],
     "functions": [],
     "answer": "Static members belong to the class itself, so you call them with ClassName::method() without creating an object. Inside a static method there is no $this. Use static:: for late static binding when a child class should get its own version.",
@@ -171,7 +171,7 @@
       "trait",
       "traits",
       "use trait",
-      "trait kaise use kare",
+      "how to use traits",
       "share methods"
     ],
     "functions": [],
@@ -197,7 +197,7 @@
       "getter",
       "setter",
       "encapsulation",
-      "private property kaise access kare"
+      "how to access a private property"
     ],
     "functions": [],
     "answer": "public members are open to everyone, private members only inside their own class, and protected members inside the class and its children. Keep data private and expose small getter and setter methods so the class controls how its data changes.",

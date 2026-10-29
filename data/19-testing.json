@@ -8,8 +8,8 @@
       "breakpoint",
       "debugger",
       "stack trace",
-      "debug kaise kare",
-      "xdebug kaise use kare"
+      "how to debug",
+      "how to use xdebug"
     ],
     "functions": [
       "debug_backtrace",
@@ -35,7 +35,7 @@
       "assertion",
       "assertEquals",
       "data provider",
-      "test kaise likhe",
+      "how to write tests",
       "phpunit test"
     ],
     "functions": [],
@@ -59,7 +59,7 @@
       "microtime",
       "memory usage",
       "performance debug",
-      "slow query kaise dhoondhe"
+      "how to find slow queries"
     ],
     "functions": [
       "microtime",
@@ -86,7 +86,7 @@
       "stub",
       "fake",
       "test double",
-      "mock kaise banaye",
+      "how to create mocks",
       "fake database test"
     ],
     "functions": [],
