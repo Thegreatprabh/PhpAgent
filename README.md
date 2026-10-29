@@ -1,3 +1,43 @@
+<p align="center"><img src="assets/hero.svg" alt="PHP Agent — offline PHP expert, animated hacker banner" width="100%"></p>
+
+<p align="center"><img src="assets/demo-terminal.svg" alt="Animated terminal demo: asking PhpAgent how to sort an array, and looking up str_replace" width="100%"></p>
+
+The animation above shows the same two commands. The transcript below is their exact output, for readers who cannot see the animation:
+
+```text
+$ php agent.php ask "how do I sort an array?"
+
+Sorting arrays - sort, rsort, asort, ksort, usort  [Exact match]
+-------------------------------------------------
+Category: Arrays
+
+sort re-indexes and sorts values. asort keeps keys attached to values. ksort sorts by key. usort sorts with your own comparison function, for example by a field inside each item. Sorting functions change the array in place and return true or false, not the sorted array.
+
+$marks = [85, 92, 78];
+sort($marks);
+print_r($marks);
+$prices = ["pen" => 10, "book" => 50, "bag" => 300];
+asort($prices);
+print_r($prices);
+$users = [["name" => "B", "age" => 30], ["name" => "A", "age" => 20]];
+usort($users, fn($a, $b) => $a["age"] <=> $b["age"]);
+print_r($users);
+
+
+Common mistake: sort returns a boolean, not the array. Writing $sorted = sort($arr) gives you true, not a sorted array.
+
+Related: Arrays - indexed, associative, and nested arrays | array_map, array_filter, array_reduce - transform arrays without loops
+Function: true sort(array &$array, int $flags = SORT_REGULAR)  [standard]  https://www.php.net/manual/en/function.sort.php
+
+$ php agent.php fn str_replace
+
+str_replace()
+Signature: array|string str_replace(array|string $search, array|string $replace, array|string $subject, &$count = NULL)
+Extension: standard
+Docs: https://www.php.net/manual/en/function.str-replace.php
+Verified example: curated entry "string-functions".
+```
+
 # PHP Agent
 
 An offline PHP expert, written in PHP itself. Ask a question in English,
