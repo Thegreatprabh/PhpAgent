@@ -1,0 +1,181 @@
+[
+  {
+    "id": "attributes-php8",
+    "category": "PHP 8 Features",
+    "title": "Attributes - #[...] metadata on classes and methods (PHP 8)",
+    "keywords": [
+      "attributes",
+      "attribute",
+      "annotation",
+      "#[",
+      "attribute kaise use kare",
+      "metadata attribute"
+    ],
+    "functions": [],
+    "answer": "Attributes attach metadata to classes, methods, and properties using #[...] syntax. Frameworks and tools read them with reflection. An attribute class must exist and be marked with #[Attribute], and reading attributes never runs their code automatically.",
+    "code": "#[Attribute(Attribute::TARGET_CLASS)]\nclass KbRoute {\n    public function __construct(public string $path) {}\n}\n#[KbRoute(\"/orders\")]\nclass KbOrdersController {}\n$ref = new ReflectionClass(KbOrdersController::class);\n$attrs = $ref->getAttributes(KbRoute::class);\necho $attrs[0]->newInstance()->path;\n",
+    "output": "/orders",
+    "runnable": true,
+    "pitfall": "Attributes do nothing by themselves. If nothing reads them with reflection, they are only comments, and a typo in the attribute name fails silently.",
+    "related": [
+      "namespaces",
+      "readonly-properties"
+    ]
+  },
+  {
+    "id": "fibers-intro",
+    "category": "PHP 8 Features",
+    "title": "Fibers - cooperative multitasking without threads (PHP 8.1)",
+    "keywords": [
+      "fiber",
+      "fibers",
+      "cooperative",
+      "fiber suspend",
+      "fiber kaise use kare",
+      "async fiber"
+    ],
+    "functions": [],
+    "answer": "A Fiber is a block of code that can pause with Fiber::suspend and resume later, all in one thread. Fibers do not run in parallel and do not make blocking I/O non-blocking by themselves. Frameworks use them to build async runtimes, but most application code never needs to touch them directly.",
+    "code": "$fiber = new Fiber(function (): void {\n    echo \"Step 1;\";\n    Fiber::suspend();\n    echo \"Step 2;\";\n});\n$fiber->start();\necho \"Main;\";\n$fiber->resume();\n",
+    "output": "Step 1;Main;Step 2;",
+    "runnable": true,
+    "pitfall": "Suspending outside a Fiber throws an error, and resuming a finished Fiber throws too. Fibers are a low-level building block, not a replacement for queues or workers.",
+    "related": [
+      "readonly-properties",
+      "attributes-php8"
+    ]
+  },
+  {
+    "id": "match-expression-php8",
+    "category": "PHP 8 Features",
+    "title": "match expression - strict, value-returning branching (PHP 8)",
+    "keywords": [
+      "match",
+      "match expression",
+      "match vs switch",
+      "match kaise use kare",
+      "match php 8"
+    ],
+    "functions": [],
+    "answer": "match compares with ===, returns a value, needs no break, and throws UnhandledMatchError when no arm matches and there is no default. It is the right choice when you need a value from a set of cases, while switch fits statement-heavy branching.",
+    "code": "$status = \"paid\";\n$label = match ($status) {\n    \"pending\" => \"Waiting for payment\",\n    \"paid\" => \"Payment received\",\n    \"shipped\" => \"On the way\",\n    default => \"Unknown status\",\n};\necho $label;\n",
+    "output": "Payment received",
+    "runnable": true,
+    "pitfall": "match uses strict comparison, so match (1) with a '1' arm does not match. Cast the value first when the input type is uncertain.",
+    "related": [
+      "switch-match",
+      "enums-php8"
+    ]
+  },
+  {
+    "id": "named-arguments",
+    "category": "PHP 8 Features",
+    "title": "Named arguments - calling functions by parameter name (PHP 8)",
+    "keywords": [
+      "named arguments",
+      "named parameters",
+      "call by name",
+      "named argument kaise use kare"
+    ],
+    "functions": [],
+    "answer": "Named arguments pass values by parameter name instead of position, so calls with many optional settings stay readable and order-independent. They also make it safe to skip optional parameters in the middle.",
+    "code": "function makeKbUser(string $name, int $age = 18, string $city = \"Chandigarh\"): string {\n    return \"$name, $age, $city\";\n}\necho makeKbUser(name: \"Prabh\", city: \"Mohali\");\necho makeKbUser(\"Riya\", city: \"Delhi\");\n",
+    "output": "Prabh, 18, MohaliRiya, 18, Delhi",
+    "runnable": true,
+    "pitfall": "Renaming a parameter breaks every caller that uses its name. Treat parameter names as part of your public API once named arguments are in use.",
+    "related": [
+      "functions-variadic",
+      "match-expression-php8"
+    ]
+  },
+  {
+    "id": "null-coalescing-advanced",
+    "category": "PHP 8 Features",
+    "title": "Null coalescing assignment ??= and throw expressions (PHP 8)",
+    "keywords": [
+      "null coalescing assignment",
+      "??=",
+      "throw expression",
+      "null coalescing",
+      "??= kaise use kare"
+    ],
+    "functions": [],
+    "answer": "??= assigns a value only when the variable is missing or null, which is ideal for defaults. Since PHP 8, throw can be used as an expression inside ??, ternary, and arrow functions, so validation stays in one line.",
+    "code": "$settings = [];\n$settings[\"theme\"] ??= \"light\";\n$settings[\"theme\"] ??= \"dark\";\necho $settings[\"theme\"]; // light\ntry {\n    $name = $_GET[\"name\"] ?? throw new InvalidArgumentException(\"name is required\");\n    echo $name;\n} catch (InvalidArgumentException $e) {\n    echo \"\\n\" . $e->getMessage();\n}\n",
+    "output": "light\nname is required",
+    "runnable": true,
+    "pitfall": "??= checks isset, so it also overwrites a value that is explicitly null. If null is a meaningful stored value, check with array_key_exists instead.",
+    "related": [
+      "operators",
+      "nullsafe-operator"
+    ]
+  },
+  {
+    "id": "nullsafe-operator",
+    "category": "PHP 8 Features",
+    "title": "Nullsafe operator - ?-> chains that stop at null (PHP 8)",
+    "keywords": [
+      "nullsafe",
+      "nullsafe operator",
+      "question arrow",
+      "?->",
+      "null safe",
+      "null check chain"
+    ],
+    "functions": [],
+    "answer": "The ?-> operator short-circuits a chain and returns null as soon as it meets null, instead of throwing an error on a null object. It only helps with null, not with other missing values, and the rest of the chain is skipped entirely.",
+    "code": "class KbProfile { public function __construct(public string $bio) {} }\nclass KbAccount2 { public ?KbProfile $profile = null; }\n$account = new KbAccount2();\necho $account->profile?->bio ?? \"no bio\";\n$account->profile = new KbProfile(\"PHP learner\");\necho $account->profile?->bio ?? \"no bio\";\n",
+    "output": "no bioPHP learner",
+    "runnable": true,
+    "pitfall": "Nullsafe does not protect array access. $data['user']?->name is still an error when the key is missing, because the array lookup happens first.",
+    "related": [
+      "operators",
+      "null-coalescing-advanced"
+    ]
+  },
+  {
+    "id": "readonly-properties",
+    "category": "PHP 8 Features",
+    "title": "Readonly properties - write once, then immutable (PHP 8.1)",
+    "keywords": [
+      "readonly",
+      "readonly property",
+      "immutable",
+      "readonly kaise use kare",
+      "final property"
+    ],
+    "functions": [],
+    "answer": "A readonly property can only be written once, from the scope where it is declared, typically in the constructor. After that, any write throws an Error. Readonly properties must be typed, cannot have a default value, and cannot be unset or passed by reference for writing.",
+    "code": "class KbMoney {\n    public function __construct(\n        public readonly float $amount,\n        public readonly string $currency,\n    ) {}\n}\n$money = new KbMoney(499.0, \"INR\");\necho $money->amount . \" \" . $money->currency;\n",
+    "output": "499 INR",
+    "runnable": true,
+    "pitfall": "A readonly property that is never written stays uninitialized, and reading it throws an Error. Always set every readonly property in the constructor.",
+    "related": [
+      "visibility-encapsulation",
+      "union-types"
+    ]
+  },
+  {
+    "id": "union-types",
+    "category": "PHP 8 Features",
+    "title": "Union and mixed types - int|string, ?Type, and mixed (PHP 8)",
+    "keywords": [
+      "union types",
+      "mixed type",
+      "nullable type",
+      "int|string",
+      "union type kaise likhe",
+      "type declarations"
+    ],
+    "functions": [],
+    "answer": "Union types accept several types, written with |. ?Type is short for Type|null. mixed accepts anything, including null, and is the explicit way to say no type check applies. Prefer the narrowest type that is honest, and reserve mixed for genuinely untyped data.",
+    "code": "function formatKbId(int|string $id): string {\n    return \"ID-\" . $id;\n}\necho formatKbId(42);\necho formatKbId(\"A-7\");\nfunction findKbUser(?int $id): ?string {\n    return $id === null ? null : \"User $id\";\n}\nvar_dump(findKbUser(null));\n",
+    "output": "ID-42ID-A-7NULL",
+    "runnable": true,
+    "pitfall": "A union type with false, such as int|false, is easy to misread. Prefer returning null or throwing an exception over false as a failure signal in new code.",
+    "related": [
+      "type-casting",
+      "named-arguments"
+    ]
+  }
+]

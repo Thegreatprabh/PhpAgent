@@ -1,0 +1,103 @@
+[
+  {
+    "id": "form-checkbox-select",
+    "category": "Forms & Validation",
+    "title": "Checkboxes, radio buttons, and select lists in PHP forms",
+    "keywords": [
+      "checkbox",
+      "radio",
+      "select",
+      "multiple select",
+      "checkbox value",
+      "form checkbox kaise le"
+    ],
+    "functions": [],
+    "answer": "An unchecked checkbox sends nothing at all, so always read it with ??. Name a group of checkboxes with [] to receive them as an array. A select list sends the value of the chosen option, not its label.",
+    "code": "$agree = isset($_POST[\"agree\"]);\n$colors = $_POST[\"colors\"] ?? [];\n$size = $_POST[\"size\"] ?? \"M\";\necho $agree ? \"agreed\" : \"not agreed\";\necho $size;\necho count($colors);\n",
+    "output": "not agreedM0",
+    "runnable": true,
+    "pitfall": "Reading $_POST['agree'] directly when the box is unchecked raises an undefined index warning. Use isset or ?? for every optional field.",
+    "related": [
+      "get-post-forms",
+      "validation-sanitization"
+    ]
+  },
+  {
+    "id": "form-redirect-pattern",
+    "category": "Forms & Validation",
+    "title": "Post/Redirect/Get - stop double form submission on refresh",
+    "keywords": [
+      "post redirect get",
+      "PRG",
+      "double submit",
+      "refresh resubmit",
+      "header location",
+      "form resubmit rokna"
+    ],
+    "functions": [
+      "header"
+    ],
+    "answer": "After a successful POST, redirect to a result page instead of printing the result directly. When the user refreshes, the browser repeats a harmless GET instead of resubmitting the payment or order. Store a one-time flash message in the session to show after the redirect. This example is syntax-checked only because it sends HTTP headers.",
+    "code": "if (($_SERVER[\"REQUEST_METHOD\"] ?? \"\") === \"POST\") {\n    // Save the order here, then:\n    $_SESSION[\"flash\"] = \"Order saved.\";\n    header(\"Location: /thank-you.php\");\n    exit;\n}\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Code after header('Location: ...') keeps running unless you call exit. Always exit immediately after a redirect.",
+    "related": [
+      "sessions",
+      "get-post-forms"
+    ]
+  },
+  {
+    "id": "get-post-forms",
+    "category": "Forms & Validation",
+    "title": "GET and POST forms - reading form data safely",
+    "keywords": [
+      "GET form",
+      "POST form",
+      "form data",
+      "form submit",
+      "form se data kaise le",
+      "form handling",
+      "GET POST form"
+    ],
+    "functions": [],
+    "answer": "Use GET for searches and shareable links, and POST for actions that change data. Read submitted values from $_POST with ?? defaults, trim them, and check they exist before use. This example is syntax-checked only because it needs a real form submission.",
+    "code": "if (($_SERVER[\"REQUEST_METHOD\"] ?? \"\") === \"POST\") {\n    $name = trim($_POST[\"name\"] ?? \"\");\n    $email = trim($_POST[\"email\"] ?? \"\");\n    if ($name === \"\" || $email === \"\") {\n        echo \"Name and email are required.\";\n    } else {\n        echo \"Hello, \" . htmlspecialchars($name, ENT_QUOTES, \"UTF-8\");\n    }\n}\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Accepting a state-changing action over GET means a link or image can trigger it. Actions like delete, pay, and publish must use POST plus a CSRF token.",
+    "related": [
+      "validation-sanitization",
+      "csrf-protection"
+    ]
+  },
+  {
+    "id": "validation-sanitization",
+    "category": "Forms & Validation",
+    "title": "Validation and sanitization - filter_var, required checks, error messages",
+    "keywords": [
+      "validation",
+      "validate",
+      "sanitize",
+      "filter_var",
+      "validate email",
+      "required field",
+      "form validation",
+      "input validate kaise kare"
+    ],
+    "functions": [
+      "filter_var",
+      "trim",
+      "htmlspecialchars"
+    ],
+    "answer": "Validation rejects bad data, sanitization cleans it. Check required fields first, then validate formats with filter_var for email and URLs, and range checks for numbers. Collect all errors and show them together instead of stopping at the first one.",
+    "code": "$errors = [];\n$email = trim($_POST[\"email\"] ?? \"\");\n$age = $_POST[\"age\"] ?? \"\";\nif ($email === \"\" || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {\n    $errors[] = \"A valid email is required.\";\n}\nif (!is_numeric($age) || (int) $age < 13) {\n    $errors[] = \"Age must be 13 or more.\";\n}\necho empty($errors) ? \"Valid.\" : implode(\" \", $errors);\n",
+    "output": "A valid email is required. Age must be 13 or more.",
+    "runnable": true,
+    "pitfall": "Sanitizing is not validating. Stripping characters from an invalid email and accepting it still stores a broken address. Reject invalid input instead of silently fixing it.",
+    "related": [
+      "get-post-forms",
+      "xss-prevention"
+    ]
+  }
+]

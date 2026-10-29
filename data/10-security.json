@@ -1,0 +1,154 @@
+[
+  {
+    "id": "csrf-protection",
+    "category": "Security",
+    "title": "CSRF protection - tokens on every state-changing form",
+    "keywords": [
+      "csrf",
+      "csrf token",
+      "cross site request forgery",
+      "csrf token kaise banaye",
+      "form token"
+    ],
+    "functions": [
+      "hash_equals",
+      "random_bytes"
+    ],
+    "answer": "Cross-site request forgery tricks a logged-in browser into submitting a form on another site. Put a random token in the session and in every state-changing form, then compare them with hash_equals on submission. Rotate the token after login and after privilege changes.",
+    "code": "if (empty($_SESSION[\"csrf\"])) {\n    $_SESSION[\"csrf\"] = bin2hex(random_bytes(32));\n}\n$token = $_SESSION[\"csrf\"];\n$submitted = $_POST[\"csrf\"] ?? \"\";\n$isValid = hash_equals($token, $submitted);\nvar_dump($isValid);\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Comparing tokens with == leaks timing information and can be bypassed with type juggling. Always use hash_equals for secret comparisons.",
+    "related": [
+      "sessions",
+      "get-post-forms"
+    ]
+  },
+  {
+    "id": "password-verify",
+    "category": "Security",
+    "title": "Passwords - password_hash, password_verify, and rehashing",
+    "keywords": [
+      "password_hash",
+      "password_verify",
+      "hash password",
+      "password store kaise kare",
+      "login password check",
+      "password_needs_rehash"
+    ],
+    "functions": [
+      "password_hash",
+      "password_verify",
+      "password_needs_rehash"
+    ],
+    "answer": "Never store plain passwords or fast hashes like MD5. password_hash creates a salted, slow hash with the current default algorithm, and password_verify checks a login attempt against it in constant time. Rehash when the algorithm or cost changes.",
+    "code": "$hash = password_hash(\"correct horse battery staple\", PASSWORD_DEFAULT);\nvar_dump(password_verify(\"correct horse battery staple\", $hash));\nvar_dump(password_verify(\"wrong password\", $hash));\nvar_dump(password_needs_rehash($hash, PASSWORD_DEFAULT));\n",
+    "output": "bool(true)\nbool(false)\nbool(false)",
+    "runnable": true,
+    "pitfall": "Comparing hashes with == or storing the plain password 'for recovery' both break security. There is no safe way to recover a password, only to reset it.",
+    "related": [
+      "sessions",
+      "validation-sanitization"
+    ]
+  },
+  {
+    "id": "path-traversal-prevention",
+    "category": "Security",
+    "title": "Path traversal prevention - basename, realpath, and allow-lists",
+    "keywords": [
+      "path traversal",
+      "directory traversal",
+      "basename",
+      "realpath",
+      "traversal attack",
+      "file path secure"
+    ],
+    "functions": [
+      "basename",
+      "realpath"
+    ],
+    "answer": "Path traversal uses ../ to escape the intended folder. Strip directories with basename, resolve the real path with realpath, and confirm the result still starts with the allowed base folder before opening anything.",
+    "code": "$base = sys_get_temp_dir() . \"/kb-safe\";\nmkdir($base, 0755, true);\n$requested = basename($_GET[\"file\"] ?? \"a.txt\");\n$path = $base . \"/\" . $requested;\n$real = realpath($path);\necho $real !== false && str_starts_with($real, $base) ? \"safe\" : \"blocked\";\nrmdir($base);\n",
+    "output": "blocked",
+    "runnable": true,
+    "pitfall": "Checking for ../ in the raw string is not enough, because encoded and double-encoded forms decode later. Resolve the path first, then check the prefix.",
+    "related": [
+      "file-read-write",
+      "file-uploads"
+    ]
+  },
+  {
+    "id": "secure-headers",
+    "category": "Security",
+    "title": "Security headers - CSP, HSTS, X-Frame-Options, and cookie flags",
+    "keywords": [
+      "security headers",
+      "content security policy",
+      "csp",
+      "hsts",
+      "x-frame-options",
+      "security headers kaise lagaye"
+    ],
+    "functions": [
+      "header"
+    ],
+    "answer": "Security headers tell the browser how to treat your pages: Content-Security-Policy limits where scripts can load from, Strict-Transport-Security forces HTTPS, and X-Frame-Options stops clickjacking. Send them on every response, before any output. This example is syntax-checked only because it sends HTTP headers.",
+    "code": "header(\"Content-Security-Policy: default-src 'self'; script-src 'self'\");\nheader(\"Strict-Transport-Security: max-age=31536000; includeSubDomains\");\nheader(\"X-Frame-Options: DENY\");\nheader(\"X-Content-Type-Options: nosniff\");\nheader(\"Referrer-Policy: no-referrer-when-downgrade\");\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "A Content-Security-Policy copied from another site can break your own scripts and styles. Start in report-only mode, read the reports, then enforce.",
+    "related": [
+      "xss-prevention",
+      "cookies"
+    ]
+  },
+  {
+    "id": "sql-injection-prevention",
+    "category": "Security",
+    "title": "SQL injection prevention - prepared statements, never string building",
+    "keywords": [
+      "sql injection",
+      "prepared statement",
+      "bindparam",
+      "bindvalue",
+      "sql injection se bachao",
+      "query secure kaise kare"
+    ],
+    "functions": [],
+    "answer": "SQL injection happens when user input is glued into a query string. Prepared statements send the query and the data separately, so input can never change the query structure. Never build SQL by concatenating variables, even after escaping. This example is syntax-checked only because it needs a database.",
+    "code": "$pdo = new PDO(\"mysql:host=localhost;dbname=shop\", \"app\", \"secret\");\n$stmt = $pdo->prepare(\"SELECT * FROM users WHERE email = :email\");\n$stmt->execute([\":email\" => $_POST[\"email\"] ?? \"\"]);\n$user = $stmt->fetch(PDO::FETCH_ASSOC);\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Prepared statements protect values, not identifiers. Table and column names cannot be bound, so validate them against a fixed allow-list instead.",
+    "related": [
+      "pdo-connect",
+      "pdo-prepared-statements"
+    ]
+  },
+  {
+    "id": "xss-prevention",
+    "category": "Security",
+    "title": "XSS prevention - escaping output with htmlspecialchars",
+    "keywords": [
+      "xss",
+      "cross site scripting",
+      "htmlspecialchars",
+      "escape output",
+      "script injection",
+      "xss se bachao"
+    ],
+    "functions": [
+      "htmlspecialchars",
+      "htmlentities"
+    ],
+    "answer": "Cross-site scripting happens when attacker-supplied text is printed into HTML unescaped and the browser runs it as code. Escape every dynamic value at the moment you print it, with htmlspecialchars and ENT_QUOTES. Escape for the context you are in: HTML body, attribute, JavaScript, and URLs each need different handling.",
+    "code": "$comment = $_GET[\"comment\"] ?? \"\";\necho htmlspecialchars($comment, ENT_QUOTES, \"UTF-8\");\n$safeUrl = htmlspecialchars(\"/search?q=\" . urlencode($comment), ENT_QUOTES, \"UTF-8\");\necho $safeUrl;\n",
+    "output": "",
+    "runnable": true,
+    "pitfall": "Escaping input when saving it corrupts the stored data and still misses contexts. Store the original, escape on output, in the right context.",
+    "related": [
+      "validation-sanitization",
+      "csrf-protection"
+    ]
+  }
+]

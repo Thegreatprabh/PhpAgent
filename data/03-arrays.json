@@ -1,0 +1,231 @@
+[
+  {
+    "id": "array-add-remove",
+    "category": "Arrays",
+    "title": "Adding and removing array items - push, unset, array_push, array_pop",
+    "keywords": [
+      "array_push",
+      "array_pop",
+      "array_shift",
+      "array_unshift",
+      "unset array",
+      "array me add karna",
+      "array se hatana",
+      "append array"
+    ],
+    "functions": [
+      "array_push",
+      "array_pop",
+      "array_shift",
+      "array_unshift",
+      "unset"
+    ],
+    "answer": "Append with [] or array_push. Remove the last item with array_pop and the first with array_shift. unset removes one item but leaves a gap in the numbering, so re-index with array_values when order matters.",
+    "code": "$cart = [\"pen\"];\n$cart[] = \"book\";\narray_push($cart, \"bag\");\n$last = array_pop($cart);\nunset($cart[0]);\n$cart = array_values($cart);\nprint_r($cart);\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "After unset, count and indexes no longer line up. If you loop expecting 0, 1, 2 in order, call array_values first.",
+    "related": [
+      "arrays-basics",
+      "array-sort"
+    ]
+  },
+  {
+    "id": "array-count-check",
+    "category": "Arrays",
+    "title": "Counting and checking arrays - count, empty, is_array, array_key_exists",
+    "keywords": [
+      "count array",
+      "empty array",
+      "is_array",
+      "array_key_exists",
+      "array check",
+      "array khali hai ya nahi"
+    ],
+    "functions": [
+      "count",
+      "empty",
+      "is_array",
+      "array_key_exists",
+      "isset"
+    ],
+    "answer": "count returns how many items an array has. empty is true for an empty array, and also for null, false, 0 and an empty string, so it does not prove a value is an array. is_array proves the type, and array_key_exists proves a key exists even when its value is null.",
+    "code": "$data = [\"a\" => null];\nvar_dump(count($data));\nvar_dump(empty($data));\nvar_dump(is_array($data));\nvar_dump(array_key_exists(\"a\", $data));\nvar_dump(isset($data[\"a\"]));\n",
+    "output": "int(1)\nbool(false)\nbool(true)\nbool(true)\nbool(false)",
+    "runnable": true,
+    "pitfall": "isset returns false for a key whose value is null, even though the key exists. Use array_key_exists when null is a valid value.",
+    "related": [
+      "arrays-basics",
+      "validation-sanitization"
+    ]
+  },
+  {
+    "id": "array-destructure-spread",
+    "category": "Arrays",
+    "title": "Destructuring and spread - list(), short syntax, and ... unpacking",
+    "keywords": [
+      "list",
+      "destructuring",
+      "spread operator",
+      "unpack array",
+      "array spread",
+      "list assignment"
+    ],
+    "functions": [],
+    "answer": "List assignment pulls array values into separate variables in one line. The spread operator unpacks arrays into a new array or into function arguments. Spread with string keys overwrites earlier values with later ones.",
+    "code": "[$first, $second] = [\"Prabh\", \"Singh\"];\necho \"$first $second\";\n$base = [1, 2];\n$all = [...$base, 3, 4];\nprint_r($all);\nfunction add3(int $a, int $b, int $c): int { return $a + $b + $c; }\necho add3(...[1, 2, 3]);\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "Unpacking a string-keyed array into another array with ... keeps later values only for duplicate keys, which can silently drop data.",
+    "related": [
+      "arrays-basics",
+      "functions-variadic"
+    ]
+  },
+  {
+    "id": "array-map-filter",
+    "category": "Arrays",
+    "title": "array_map, array_filter, array_reduce - transform arrays without loops",
+    "keywords": [
+      "array_map",
+      "array_filter",
+      "array_reduce",
+      "array_walk",
+      "transform array",
+      "filter array",
+      "map filter reduce"
+    ],
+    "functions": [
+      "array_map",
+      "array_filter",
+      "array_reduce",
+      "array_walk"
+    ],
+    "answer": "array_map applies a function to every item and returns a new array. array_filter keeps only items that pass a test. array_reduce combines all items into one value, such as a total. They do not change the original array.",
+    "code": "$prices = [100, 200, 300];\n$withTax = array_map(fn($p) => $p * 1.18, $prices);\n$big = array_filter($prices, fn($p) => $p >= 200);\n$total = array_reduce($prices, fn($carry, $p) => $carry + $p, 0);\nprint_r($withTax);\nprint_r(array_values($big));\necho $total;\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "array_filter keeps the original keys, so a filtered list can have gaps. Call array_values on the result before encoding it as JSON, or it becomes an object.",
+    "related": [
+      "array-sort",
+      "foreach-array-loop"
+    ]
+  },
+  {
+    "id": "array-merge-search",
+    "category": "Arrays",
+    "title": "Merging and searching arrays - merge, in_array, array_search, array_column",
+    "keywords": [
+      "array_merge",
+      "in_array",
+      "array_search",
+      "array_column",
+      "array_merge kaise kare",
+      "array me value hai ya nahi",
+      "array search"
+    ],
+    "functions": [
+      "array_merge",
+      "in_array",
+      "array_search",
+      "array_column",
+      "array_unique",
+      "array_diff"
+    ],
+    "answer": "array_merge combines arrays. in_array checks whether a value exists, and array_search returns its key or false. array_column pulls one field out of a list of records. Pass true as the third argument to in_array and array_search for strict type comparison.",
+    "code": "$a = [1, 2];\n$b = [3, 4];\nprint_r(array_merge($a, $b));\nvar_dump(in_array(2, $a, true));\nvar_dump(in_array(\"2\", $a, true));\n$users = [[\"id\" => 1, \"name\" => \"Aman\"], [\"id\" => 2, \"name\" => \"Riya\"]];\nprint_r(array_column($users, \"name\"));\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "Without strict mode, in_array('2', [2]) is true because PHP converts types. For IDs and tokens, always pass true.",
+    "related": [
+      "arrays-basics",
+      "array-sort"
+    ]
+  },
+  {
+    "id": "array-sort",
+    "category": "Arrays",
+    "title": "Sorting arrays - sort, rsort, asort, ksort, usort",
+    "keywords": [
+      "sort array",
+      "rsort",
+      "asort",
+      "ksort",
+      "usort",
+      "array sort kaise kare",
+      "array sort",
+      "sort by value"
+    ],
+    "functions": [
+      "sort",
+      "rsort",
+      "asort",
+      "arsort",
+      "ksort",
+      "krsort",
+      "usort"
+    ],
+    "answer": "sort re-indexes and sorts values. asort keeps keys attached to values. ksort sorts by key. usort sorts with your own comparison function, for example by a field inside each item. Sorting functions change the array in place and return true or false, not the sorted array.",
+    "code": "$marks = [85, 92, 78];\nsort($marks);\nprint_r($marks);\n$prices = [\"pen\" => 10, \"book\" => 50, \"bag\" => 300];\nasort($prices);\nprint_r($prices);\n$users = [[\"name\" => \"B\", \"age\" => 30], [\"name\" => \"A\", \"age\" => 20]];\nusort($users, fn($a, $b) => $a[\"age\"] <=> $b[\"age\"]);\nprint_r($users);\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "sort returns a boolean, not the array. Writing $sorted = sort($arr) gives you true, not a sorted array.",
+    "related": [
+      "arrays-basics",
+      "array-map-filter"
+    ]
+  },
+  {
+    "id": "arrays-basics",
+    "category": "Arrays",
+    "title": "Arrays - indexed, associative, and nested arrays",
+    "keywords": [
+      "array",
+      "arrays",
+      "associative array",
+      "indexed array",
+      "nested array",
+      "array kaise banaye",
+      "array me value kaise nikale",
+      "key value"
+    ],
+    "functions": [
+      "count",
+      "array_keys",
+      "array_values",
+      "isset"
+    ],
+    "answer": "An indexed array uses numbers starting at 0. An associative array uses named keys. Arrays can hold other arrays. Access values with square brackets, and check a key exists with isset before reading it.",
+    "code": "$fruits = [\"apple\", \"banana\", \"mango\"];\necho $fruits[1]; // banana\n$user = [\"name\" => \"Prabh\", \"age\" => 19, \"city\" => \"Chandigarh\"];\necho $user[\"name\"];\necho count($fruits);\necho $user[\"email\"] ?? \"no email\";\n",
+    "output": "bananaPrabh3no email",
+    "runnable": true,
+    "pitfall": "Reading a key that does not exist raises a warning. Use ?? or isset first, especially with user-supplied data.",
+    "related": [
+      "array-add-remove",
+      "foreach-array-loop"
+    ]
+  },
+  {
+    "id": "foreach-array-loop",
+    "category": "Arrays",
+    "title": "Looping arrays - foreach with keys, values, and references",
+    "keywords": [
+      "foreach array",
+      "loop array",
+      "array loop",
+      "key value loop",
+      "foreach key value",
+      "array ke har item par kaam"
+    ],
+    "functions": [],
+    "answer": "foreach reads every item without managing an index. Use key => value when you need the key too. A & reference lets you change items in place, but you must unset the reference variable afterwards or it keeps pointing at the last item.",
+    "code": "$scores = [\"Aman\" => 80, \"Riya\" => 95];\nforeach ($scores as $name => $score) {\n    echo \"$name: $score\\n\";\n}\n$nums = [1, 2, 3];\nforeach ($nums as &$n) {\n    $n = $n * 10;\n}\nunset($n);\nprint_r($nums);\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "Forgetting unset($n) after a reference loop leaves $n bound to the last element, and later assignments to $n silently change your array.",
+    "related": [
+      "arrays-basics",
+      "array-map-filter"
+    ]
+  }
+]

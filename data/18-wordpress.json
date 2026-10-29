@@ -1,0 +1,107 @@
+[
+  {
+    "id": "wordpress-hooks",
+    "category": "WordPress",
+    "title": "WordPress hooks - add_action and add_filter basics",
+    "keywords": [
+      "wordpress",
+      "add_action",
+      "add_filter",
+      "hooks",
+      "wordpress hook",
+      "action filter kaise use kare"
+    ],
+    "functions": [
+      "add_action",
+      "add_filter"
+    ],
+    "answer": "WordPress hooks let plugins run code at fixed points. add_action runs your function when an event fires, and add_filter changes a value passing through. Hooks only exist inside WordPress, so this code cannot run in plain PHP. This example is syntax-checked only and requires WordPress.",
+    "code": "add_action(\"init\", function (): void {\n    // Runs on every WordPress load, after WordPress is ready.\n});\nadd_filter(\"the_title\", function (string $title): string {\n    return \"Shop: \" . $title;\n});\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Hooking into init to print output breaks feeds and redirects, because headers may already be sent. Use hooks for logic, and template hooks for output.",
+    "related": [
+      "wordpress-shortcode",
+      "wordpress-options"
+    ]
+  },
+  {
+    "id": "wordpress-options",
+    "category": "WordPress",
+    "title": "WordPress options and posts - get_option, get_posts basics",
+    "keywords": [
+      "wordpress options",
+      "get_option",
+      "update_option",
+      "get_posts",
+      "wp_query",
+      "wordpress data kaise le"
+    ],
+    "functions": [
+      "get_option",
+      "update_option",
+      "get_posts"
+    ],
+    "answer": "get_option and update_option store small settings in the WordPress options table. get_posts fetches posts matching simple criteria. Both only work inside WordPress with a database connected. This example is syntax-checked only and requires WordPress.",
+    "code": "$shopName = get_option(\"shop_name\", \"My Shop\");\nupdate_option(\"shop_name\", \"Prabh Store\");\n$posts = get_posts([\"numberposts\" => 5, \"post_status\" => \"publish\"]);\nforeach ($posts as $post) {\n    echo esc_html($post->post_title) . \"\\n\";\n}\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Storing large data or secrets in options bloats every page load, because autoloaded options load on every request. Keep options small, and never store plain passwords in them.",
+    "related": [
+      "wordpress-hooks",
+      "pdo-fetch-modes"
+    ]
+  },
+  {
+    "id": "wordpress-shortcode",
+    "category": "WordPress",
+    "title": "WordPress shortcodes - [myshortcode] in posts and pages",
+    "keywords": [
+      "wordpress shortcode",
+      "shortcode",
+      "add_shortcode",
+      "shortcode kaise banaye"
+    ],
+    "functions": [
+      "add_shortcode",
+      "shortcode_atts"
+    ],
+    "answer": "A shortcode lets editors drop dynamic output into a post with [tag]. Register it with add_shortcode, read its attributes with shortcode_atts for defaults, and return the HTML instead of echoing it. This example is syntax-checked only and requires WordPress.",
+    "code": "add_shortcode(\"hello_shop\", function (array $atts): string {\n    $atts = shortcode_atts([\"name\" => \"Guest\"], $atts, \"hello_shop\");\n    return \"Hello, \" . esc_html($atts[\"name\"]) . \"!\";\n});\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Echoing inside a shortcode prints the output at the top of the page instead of where the shortcode sits. Shortcodes must return their HTML.",
+    "related": [
+      "wordpress-hooks",
+      "xss-prevention"
+    ]
+  },
+  {
+    "id": "wordpress-theme-loop",
+    "category": "WordPress",
+    "title": "WordPress theme loop - the Loop, the_title, the_content",
+    "keywords": [
+      "wordpress loop",
+      "the loop",
+      "the_title",
+      "the_content",
+      "have_posts",
+      "wordpress theme kaise banaye"
+    ],
+    "functions": [
+      "have_posts",
+      "the_post",
+      "the_title",
+      "the_content"
+    ],
+    "answer": "The Loop walks through the posts WordPress already queried for the page. Inside it, template tags print the current post's title and content. Escape custom fields yourself, and reset post data after any custom query. This example is syntax-checked only and requires WordPress.",
+    "code": "if (have_posts()) {\n    while (have_posts()) {\n        the_post();\n        the_title(\"<h2>\", \"</h2>\");\n        the_content();\n    }\n} else {\n    echo \"No posts found.\";\n}\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "A custom WP_Query loop without wp_reset_postdata leaves later template tags pointing at the wrong post. Reset after every custom loop.",
+    "related": [
+      "wordpress-hooks",
+      "wordpress-options"
+    ]
+  }
+]

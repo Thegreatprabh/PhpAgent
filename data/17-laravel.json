@@ -1,0 +1,118 @@
+[
+  {
+    "id": "blade-style-templates",
+    "category": "Laravel-Style Patterns",
+    "title": "Template escaping - the Blade {{ }} idea in plain PHP",
+    "keywords": [
+      "blade",
+      "template",
+      "template escaping",
+      "blade syntax",
+      "template kaise banaye",
+      "view template"
+    ],
+    "functions": [
+      "htmlspecialchars"
+    ],
+    "answer": "Blade's {{ $name }} prints a value escaped for HTML, and {!! $html !!} prints it raw. In plain PHP, htmlspecialchars is the same protection. Always escape in the view, at the moment of printing, and keep raw output for trusted HTML only.",
+    "code": "$name = $_GET[\"name\"] ?? \"Guest\";\necho htmlspecialchars($name, ENT_QUOTES, \"UTF-8\");\n$trusted = \"<strong>Sale!</strong>\";\necho $trusted;\n",
+    "output": "Guest<strong>Sale!</strong>",
+    "runnable": true,
+    "pitfall": "Marking user input as trusted HTML is the fastest way to an XSS hole. Only content your own code generated may skip escaping.",
+    "related": [
+      "xss-prevention",
+      "mvc-pattern"
+    ]
+  },
+  {
+    "id": "eloquent-style-queries",
+    "category": "Laravel-Style Patterns",
+    "title": "Eloquent-style queries explained in plain PDO",
+    "keywords": [
+      "eloquent",
+      "query builder",
+      "eloquent style",
+      "where orderby",
+      "fluent query",
+      "eloquent kaise samjhe"
+    ],
+    "functions": [],
+    "answer": "Eloquent-style code chains methods like where and orderBy to build a query, then get runs it. Underneath, it still becomes SQL with bound parameters. The plain-PDO version below shows exactly what the chain means, so the magic is never mysterious. This example is syntax-checked only because it needs a database and a $pdo object.",
+    "code": "// Eloquent-style (Laravel only):\n// User::where(\"city\", \"Chandigarh\")->orderBy(\"name\")->get();\n// Same idea in plain PDO:\n$stmt = $pdo->prepare(\"SELECT * FROM users WHERE city = :city ORDER BY name\");\n$stmt->execute([\":city\" => \"Chandigarh\"]);\n$users = $stmt->fetchAll();\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Chaining where calls inside a loop can fire one query per row, the N+1 problem. Fetch related data in one query with a join or eager loading instead.",
+    "related": [
+      "pdo-prepared-statements",
+      "mvc-pattern"
+    ]
+  },
+  {
+    "id": "middleware-concept",
+    "category": "Laravel-Style Patterns",
+    "title": "Middleware concept - wrapping requests with auth and logging",
+    "keywords": [
+      "middleware",
+      "auth middleware",
+      "request pipeline",
+      "middleware kaise banaye",
+      "middleware concept"
+    ],
+    "functions": [],
+    "answer": "Middleware is a layer that runs before or after the handler: check login, log the request, or add headers. Each layer either passes the request onward or returns a response early, such as a redirect to login. This example is syntax-checked only because it models request flow.",
+    "code": "$authMiddleware = function (array $request, callable $next): string {\n    if (empty($request[\"user_id\"])) {\n        return \"Redirect to login\";\n    }\n    return $next($request);\n};\n$result = $authMiddleware([\"user_id\" => 42], fn($req) => \"Welcome, user \" . $req[\"user_id\"]);\necho $result;\n",
+    "output": "Welcome, user 42",
+    "runnable": true,
+    "pitfall": "Middleware that forgets to call the next handler silently drops the request. Every path must either return a response or call the next layer.",
+    "related": [
+      "routing-plain-php",
+      "mvc-pattern"
+    ]
+  },
+  {
+    "id": "mvc-pattern",
+    "category": "Laravel-Style Patterns",
+    "title": "MVC pattern in plain PHP - Model, View, Controller without a framework",
+    "keywords": [
+      "mvc",
+      "model view controller",
+      "mvc pattern",
+      "controller",
+      "mvc kaise banaye",
+      "mvc php"
+    ],
+    "functions": [],
+    "answer": "MVC separates concerns: the Model talks to the database, the Controller handles the request and picks data, and the View only prints HTML. Even without a framework, keeping these apart makes code testable and readable. This example is syntax-checked only because it models request flow, not a runnable script.",
+    "code": "// Model: UserRepository fetches users with PDO.\n// Controller: UserController calls the repository, then includes the view.\n// View: users.php loops over $users and escapes output with htmlspecialchars.\nclass KbUserController {\n    public function __construct(private KbUserRepository $users) {}\n    public function index(): void {\n        $users = $this->users->all();\n        require __DIR__ . \"/views/users.php\";\n    }\n}\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Putting SQL queries inside view files mixes layers and makes the page untestable. Views should receive ready data and only escape and print it.",
+    "related": [
+      "routing-plain-php",
+      "middleware-concept"
+    ]
+  },
+  {
+    "id": "routing-plain-php",
+    "category": "Laravel-Style Patterns",
+    "title": "Routing in plain PHP - a tiny router with methods and parameters",
+    "keywords": [
+      "routing",
+      "router",
+      "route",
+      "routing kaise banaye",
+      "url routing",
+      "route parameters"
+    ],
+    "functions": [],
+    "answer": "A router maps a method plus a path to a handler. Match the request method and URI, pull {id} segments out of the path, and return a 404 for anything unmatched. This example is syntax-checked only because it needs an HTTP request.",
+    "code": "$routes = [\n    \"GET /users\" => \"listUsers\",\n    \"GET /users/{id}\" => \"showUser\",\n];\n$method = $_SERVER[\"REQUEST_METHOD\"] ?? \"GET\";\n$path = parse_url($_SERVER[\"REQUEST_URI\"] ?? \"/\", PHP_URL_PATH);\necho \"$method $path\";\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Matching routes with plain string equality breaks on trailing slashes and query strings. Normalise the path first, and strip the query part before matching.",
+    "related": [
+      "mvc-pattern",
+      "middleware-concept"
+    ]
+  }
+]

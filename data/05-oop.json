@@ -1,0 +1,213 @@
+[
+  {
+    "id": "class-object",
+    "category": "OOP",
+    "title": "Classes and objects - properties, methods, constructor",
+    "keywords": [
+      "class",
+      "object",
+      "new class",
+      "constructor",
+      "method",
+      "property",
+      "class kaise banaye",
+      "object kaise banaye"
+    ],
+    "functions": [],
+    "answer": "A class is a blueprint. new creates an object from it. The constructor runs when the object is created and usually stores the starting values. Inside the class, $this refers to the current object, and -> reads its properties and calls its methods.",
+    "code": "class KbUser {\n    public string $name;\n    public function __construct(string $name) {\n        $this->name = $name;\n    }\n    public function greet(): string {\n        return \"Hello, \" . $this->name;\n    }\n}\n$user = new KbUser(\"Prabh\");\necho $user->greet();\n",
+    "output": "Hello, Prabh",
+    "runnable": true,
+    "pitfall": "Using $this outside a class method, or forgetting new before the class name, causes a fatal error. $this only exists inside object methods.",
+    "related": [
+      "visibility-encapsulation",
+      "inheritance"
+    ]
+  },
+  {
+    "id": "enums-php8",
+    "category": "OOP",
+    "title": "Enums - a fixed set of named values (PHP 8.1)",
+    "keywords": [
+      "enum",
+      "enums",
+      "backed enum",
+      "enum kaise banaye",
+      "fixed values",
+      "order status enum"
+    ],
+    "functions": [],
+    "answer": "An enum defines a closed set of allowed values, such as order statuses. The compiler rejects anything outside the set, which removes a whole class of typo bugs. Backed enums carry a string or int value you can store in a database.",
+    "code": "enum KbOrderStatus: string {\n    case Pending = \"pending\";\n    case Paid = \"paid\";\n    case Shipped = \"shipped\";\n}\n$status = KbOrderStatus::Paid;\necho $status->value;\necho $status->name;\n$fromDb = KbOrderStatus::from(\"shipped\");\necho $fromDb->name;\n",
+    "output": "paidPaidShipped",
+    "runnable": true,
+    "pitfall": "Enum::from() throws a ValueError for an unknown value. Use tryFrom() when the value comes from user input or a database, because it returns null instead of throwing.",
+    "related": [
+      "match-expression-php8",
+      "class-object"
+    ]
+  },
+  {
+    "id": "inheritance",
+    "category": "OOP",
+    "title": "Inheritance - extends, parent, and overriding methods",
+    "keywords": [
+      "extends",
+      "inheritance",
+      "parent class",
+      "child class",
+      "override",
+      "parent::",
+      "inheritance kaise kare"
+    ],
+    "functions": [],
+    "answer": "A child class extends a parent and inherits its public and protected members. It can override a method with its own version and still call the parent version with parent::. A child must respect the parent method signature.",
+    "code": "class KbAnimal {\n    public function sound(): string { return \"Some sound\"; }\n}\nclass KbDog extends KbAnimal {\n    public function sound(): string { return \"Bark\"; }\n    public function parentSound(): string { return parent::sound(); }\n}\n$dog = new KbDog();\necho $dog->sound();\necho $dog->parentSound();\n",
+    "output": "BarkSome sound",
+    "runnable": true,
+    "pitfall": "An overriding method cannot be more restrictive than the parent. Making a public parent method private in the child is a fatal error.",
+    "related": [
+      "class-object",
+      "interfaces-abstract"
+    ]
+  },
+  {
+    "id": "interfaces-abstract",
+    "category": "OOP",
+    "title": "Interfaces and abstract classes - contracts for your code",
+    "keywords": [
+      "interface",
+      "abstract class",
+      "implements",
+      "abstract method",
+      "contract",
+      "interface kaise banaye"
+    ],
+    "functions": [],
+    "answer": "An interface lists methods a class must provide, without saying how. An abstract class can mix finished methods with unfinished ones that children must complete. Program against the interface so implementations can be swapped without changing the code that uses them.",
+    "code": "interface KbNotifier {\n    public function send(string $to, string $message): bool;\n}\nclass KbSmsNotifier implements KbNotifier {\n    public function send(string $to, string $message): bool {\n        return true;\n    }\n}\nabstract class KbShape {\n    abstract public function area(): float;\n}\nclass KbSquare extends KbShape {\n    public function __construct(private float $side) {}\n    public function area(): float { return $this->side * $this->side; }\n}\necho (new KbSquare(4))->area();\n",
+    "output": "16",
+    "runnable": true,
+    "pitfall": "A class that implements an interface but misses one method cannot be instantiated. PHP reports the missing method at class load time.",
+    "related": [
+      "inheritance",
+      "traits"
+    ]
+  },
+  {
+    "id": "magic-methods",
+    "category": "OOP",
+    "title": "Magic methods - __get, __set, __toString, __call",
+    "keywords": [
+      "magic methods",
+      "__get",
+      "__set",
+      "__toString",
+      "__call",
+      "__construct",
+      "magic method kaise use kare"
+    ],
+    "functions": [],
+    "answer": "Magic methods run automatically in special situations: __get and __set intercept access to missing or inaccessible properties, __toString controls how an object prints, and __call catches calls to missing methods. They are powerful, but overusing them hides what a class really does.",
+    "code": "class KbBox {\n    private array $items = [];\n    public function __set(string $key, mixed $value): void { $this->items[$key] = $value; }\n    public function __get(string $key): mixed { return $this->items[$key] ?? null; }\n    public function __toString(): string { return \"Box with \" . count($this->items) . \" items\"; }\n}\n$box = new KbBox();\n$box->color = \"red\";\necho $box;\necho $box->color;\n",
+    "output": "Box with 1 itemsred",
+    "runnable": true,
+    "pitfall": "__get and __set only fire for inaccessible properties. If the property is public, they never run, which surprises people who expect interception.",
+    "related": [
+      "class-object",
+      "visibility-encapsulation"
+    ]
+  },
+  {
+    "id": "namespaces",
+    "category": "OOP",
+    "title": "Namespaces - organising classes and avoiding name collisions",
+    "keywords": [
+      "namespace",
+      "namespaces",
+      "use statement",
+      "namespace kaise use kare",
+      "class collision"
+    ],
+    "functions": [],
+    "answer": "A namespace groups classes under a vendor and package name so two libraries can both have a class called Client. Declare it as the first statement in the file, import classes with use, and refer to the current namespace with a leading backslash for global classes. This example is syntax-checked only, because a namespace declaration must be the first statement of a file.",
+    "code": "namespace App\\Shop;\n\nuse App\\Billing\\Invoice;\n\nclass OrderService\n{\n    public function total(): float\n    {\n        return 100.0;\n    }\n}",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Any code, echo, or HTML before the namespace declaration is a fatal error. The namespace line must come first, right after the opening PHP tag.",
+    "related": [
+      "composer-autoload",
+      "psr4-autoloading"
+    ]
+  },
+  {
+    "id": "static-members",
+    "category": "OOP",
+    "title": "Static properties and methods - called on the class, not an object",
+    "keywords": [
+      "static",
+      "static method",
+      "static property",
+      "self::",
+      "static::",
+      "static kaise use kare"
+    ],
+    "functions": [],
+    "answer": "Static members belong to the class itself, so you call them with ClassName::method() without creating an object. Inside a static method there is no $this. Use static:: for late static binding when a child class should get its own version.",
+    "code": "class KbCounter {\n    private static int $count = 0;\n    public static function next(): int {\n        return ++self::$count;\n    }\n}\necho KbCounter::next();\necho KbCounter::next();\n",
+    "output": "12",
+    "runnable": true,
+    "pitfall": "Static state is shared across every use in one request. Storing user-specific data in a static property leaks it between unrelated parts of the request.",
+    "related": [
+      "visibility-encapsulation",
+      "class-object"
+    ]
+  },
+  {
+    "id": "traits",
+    "category": "OOP",
+    "title": "Traits - sharing methods between unrelated classes",
+    "keywords": [
+      "trait",
+      "traits",
+      "use trait",
+      "trait kaise use kare",
+      "share methods"
+    ],
+    "functions": [],
+    "answer": "A trait is a bundle of methods that classes can pull in with use. It is not a class and cannot be instantiated. When two traits define the same method, the class must resolve the conflict with insteadof or as.",
+    "code": "trait KbLogger {\n    public function logKb(string $message): string {\n        return \"[log] \" . $message;\n    }\n}\nclass KbOrder {\n    use KbLogger;\n}\n$order = new KbOrder();\necho $order->logKb(\"Order placed\");\n",
+    "output": "[log] Order placed",
+    "runnable": true,
+    "pitfall": "A method defined directly in the class wins over a trait method, and a trait method wins over an inherited one. Relying on this silently can hide bugs, so keep trait methods small and clearly named.",
+    "related": [
+      "interfaces-abstract",
+      "class-object"
+    ]
+  },
+  {
+    "id": "visibility-encapsulation",
+    "category": "OOP",
+    "title": "Visibility - public, private, protected and getters/setters",
+    "keywords": [
+      "public",
+      "private",
+      "protected",
+      "visibility",
+      "getter",
+      "setter",
+      "encapsulation",
+      "private property kaise access kare"
+    ],
+    "functions": [],
+    "answer": "public members are open to everyone, private members only inside their own class, and protected members inside the class and its children. Keep data private and expose small getter and setter methods so the class controls how its data changes.",
+    "code": "class KbBankAccount {\n    private float $balance = 0.0;\n    public function deposit(float $amount): void {\n        if ($amount > 0) { $this->balance += $amount; }\n    }\n    public function getBalance(): float { return $this->balance; }\n}\n$account = new KbBankAccount();\n$account->deposit(500);\necho $account->getBalance();\n",
+    "output": "500",
+    "runnable": true,
+    "pitfall": "Reading a private property from outside the class is a fatal error. Always go through a method the class provides.",
+    "related": [
+      "class-object",
+      "static-members"
+    ]
+  }
+]

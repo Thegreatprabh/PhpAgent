@@ -1,0 +1,391 @@
+[
+  {
+    "answer": "PHP code <?php ... ?> ke andar likha jata hai. echo se text screen par dikhta hai. File ko .php save karo aur terminal me php file.php se chalao, ya browser me server se kholo.",
+    "category": "Basics",
+    "code": "<?php\necho \"Hello, Prabh!\";\nprint \"\\nPHP chal raha hai.\";\n?>",
+    "functions": [
+      "echo",
+      "print"
+    ],
+    "id": "hello-first-program",
+    "keywords": [
+      "hello world",
+      "pehla program",
+      "first program",
+      "echo",
+      "print",
+      "php tags",
+      "php file kaise chalaye",
+      "run php"
+    ],
+    "pitfall": "HTML file me PHP code nahi chalega - file ka naam .php hona chahiye aur PHP installed hona chahiye.",
+    "related": [
+      "variables-data-types",
+      "cli-argv"
+    ],
+    "title": "Pehla PHP program - echo aur PHP tags",
+    "output": "Hello, Prabh!\nPHP chal raha hai.",
+    "runnable": true
+  },
+  {
+    "answer": "Har variable $ se shuru hota hai. Type likhna nahi padta - value se type ban jata hai. var_dump() se type aur value dono dikhte hain.",
+    "category": "Basics",
+    "code": "<?php\n$name = \"Prabh\";   // string\n$age = 19;        // int\n$price = 99.5;    // float\n$isStudent = true; // bool\n$marks = [90, 85, 92]; // array\nvar_dump($name, $age, $marks);\n?>",
+    "functions": [
+      "var_dump",
+      "gettype",
+      "isset",
+      "empty"
+    ],
+    "id": "variables-data-types",
+    "keywords": [
+      "variable",
+      "variables",
+      "data type",
+      "data types",
+      "var_dump",
+      "int string bool",
+      "variable kaise banaye"
+    ],
+    "pitfall": "$Name aur $name alag variables hain - PHP variable names case-sensitive hote hain.",
+    "related": [
+      "operators",
+      "type-casting"
+    ],
+    "title": "Variables aur data types",
+    "output": null,
+    "runnable": true
+  },
+  {
+    "answer": "if me shart true ho to pehla block chalta hai, warna else. == sirf value check karta hai, === value + type dono - hamesha === use karo jahan ho sake. Chhoti shart ke liye ternary ?: use hota hai.",
+    "category": "Basics",
+    "code": "<?php\n$age = 19;\nif ($age >= 18) {\n    echo \"Adult\";\n} elseif ($age >= 13) {\n    echo \"Teen\";\n} else {\n    echo \"Child\";\n}\necho \"\\n\";\n// ternary\n$label = ($age >= 18) ? \"Adult\" : \"Minor\";\n// === vs ==\nvar_dump(0 == \"0\");   // true\nvar_dump(0 === \"0\");  // false\n?>",
+    "functions": [],
+    "id": "if-else-conditions",
+    "keywords": [
+      "if else",
+      "condition",
+      "comparison",
+      "equals",
+      "ternary",
+      "shart",
+      "agar to"
+    ],
+    "pitfall": "if ($a = 5) likhne se compare nahi hota, assign ho jata hai - comparison ke liye == ya === likho.",
+    "related": [
+      "operators",
+      "switch-match"
+    ],
+    "title": "if / else aur comparison - == vs ===",
+    "output": "Adult\nbool(true)\nbool(false)",
+    "runnable": true
+  },
+  {
+    "answer": "for jab count pata ho, foreach jab array ke har item par kaam ho, while jab shart par rukna ho. break loop tod deta hai, continue ek round skip karta hai.",
+    "category": "Basics",
+    "code": "<?php\nfor ($i = 1; $i <= 3; $i++) {\n    echo $i . \" \";\n}\n$names = [\"Aman\", \"Riya\", \"Prabh\"];\nforeach ($names as $name) {\n    echo $name . \"\\n\";\n}\n$count = 0;\nwhile ($count < 3) {\n    $count++;\n}\n?>",
+    "functions": [],
+    "id": "loops-for-foreach-while",
+    "keywords": [
+      "loop",
+      "loops",
+      "for loop",
+      "foreach",
+      "while loop",
+      "repeat",
+      "dohrao",
+      "break continue"
+    ],
+    "pitfall": "while loop me counter badhana mat bhoolo, warna loop kabhi nahi rukega.",
+    "related": [
+      "arrays-basics",
+      "foreach-array-loop"
+    ],
+    "title": "Loops - for, foreach, while",
+    "output": "1 2 3 Aman\nRiya\nPrabh\n",
+    "runnable": true
+  },
+  {
+    "answer": "function keyword se function banta hai. Parameter andar aane wali value hai, return bahar jaane wali. Default value dene se parameter optional ho jata hai.",
+    "category": "Basics",
+    "code": "<?php\nfunction greet(string $name, string $time = \"morning\"): string {\n    return \"Good $time, $name!\";\n}\necho greet(\"Prabh\");\necho greet(\"Prabh\", \"evening\");\n?>",
+    "functions": [],
+    "id": "functions",
+    "keywords": [
+      "function",
+      "functions",
+      "apna function",
+      "return",
+      "parameter",
+      "arguments",
+      "default value"
+    ],
+    "pitfall": "return ke baad likha code nahi chalta. Function ke andar ki variable bahar nahi dikhti.",
+    "related": [
+      "closures-callbacks",
+      "class-object"
+    ],
+    "title": "Functions - apna function kaise banaye",
+    "output": "Good morning, Prabh!Good evening, Prabh!",
+    "runnable": true
+  },
+  {
+    "answer": "String jodne ke liye PHP me + nahi, dot (.) use hota hai. ?? ka matlab hai: left side set aur null nahi hai to wahi, warna right side. % se remainder milta hai.",
+    "category": "Basics",
+    "code": "<?php\n$a = 10; $b = 3;\necho $a + $b;  // 13\necho $a % $b;  // 1\n$full = \"Prabh\" . \" \" . \"Singh\";\n$city = $_GET['city'] ?? \"Chandigarh\";\n$x = 5;\n$x += 2; // $x ab 7\n?>",
+    "functions": [],
+    "id": "operators",
+    "keywords": [
+      "operator",
+      "operators",
+      "arithmetic",
+      "concatenation",
+      "null coalescing",
+      "jodna",
+      "modulo"
+    ],
+    "pitfall": "\"5\" + 2 = 7 hota hai, lekin \"5\" . 2 = \"52\" hota hai. + aur . ko mix mat karo.",
+    "related": [
+      "variables-data-types",
+      "if-else-conditions"
+    ],
+    "title": "Operators - arithmetic, string aur null coalescing",
+    "output": "131",
+    "runnable": true
+  },
+  {
+    "answer": "Constant ki value ek baar set hone ke baad badli nahi ja sakti. define() kahin bhi chalta hai, const class ke andar aur top-level par use hota hai. Constant ka naam $ ke bina likha jata hai.",
+    "category": "Basics",
+    "code": "<?php\ndefine(\"SITE_NAME\", \"My Shop\");\nconst TAX_RATE = 0.18;\necho SITE_NAME;\necho TAX_RATE;\n?>",
+    "functions": [
+      "define"
+    ],
+    "id": "constants",
+    "keywords": [
+      "constant",
+      "constants",
+      "define",
+      "const",
+      "fixed value"
+    ],
+    "pitfall": "Constant ko $ mat lagao - $SITE_NAME galat hai, SITE_NAME sahi hai.",
+    "related": [
+      "variables-data-types"
+    ],
+    "title": "Constants - define aur const",
+    "output": "My Shop0.18",
+    "runnable": true
+  },
+  {
+    "answer": "switch ek value ko kai cases se milata hai. match PHP 8 ka chhota aur strict version hai - ye value return karta hai aur === se compare karta hai, isliye break ki zaroorat nahi.",
+    "category": "Basics",
+    "code": "<?php\n$day = \"Mon\";\nswitch ($day) {\n    case \"Mon\": echo \"Monday\"; break;\n    case \"Sun\": echo \"Sunday\"; break;\n    default: echo \"Other day\";\n}\n$label = match ($day) {\n    \"Mon\" => \"Monday\",\n    \"Sun\" => \"Sunday\",\n    default => \"Other day\",\n};\necho $label;\n?>",
+    "functions": [],
+    "id": "switch-match",
+    "keywords": [
+      "switch",
+      "match",
+      "match expression",
+      "case",
+      "multiple condition"
+    ],
+    "pitfall": "switch me break bhool gaye to agla case bhi chal jayega. match me default na ho aur koi case na mile to error aayega.",
+    "related": [
+      "if-else-conditions"
+    ],
+    "title": "switch aur match (PHP 8)",
+    "output": "MondayMonday",
+    "runnable": true
+  },
+  {
+    "answer": "Ek line ke liye // ya #, kai lines ke liye /* ... */ use karo. Comments run nahi hote, sirf padhne wale ke liye hote hain.",
+    "category": "Basics",
+    "code": "<?php\n// Ye ek line ka comment hai\n# Ye bhi ek line ka comment hai\n/*\n  Ye kai lines ka\n  comment hai\n*/\necho \"Hi\"; // line ke end par bhi comment chalega\n?>",
+    "functions": [],
+    "id": "comments",
+    "keywords": [
+      "comment",
+      "comments",
+      "note likhna",
+      "code comment"
+    ],
+    "pitfall": "Comment ke andar <?php likhne se bhi code nahi chalega - wo bhi comment hi rahega.",
+    "related": [
+      "hello-first-program"
+    ],
+    "title": "Comments - code me note kaise likhe",
+    "output": "Hi",
+    "runnable": true
+  },
+  {
+    "answer": "Terminal me php file.php se script chalti hai. Command ke baad likhe words $argv array me aate hain - $argv[0] khud file ka naam hota hai. User se input ke liye STDIN se fgets() padho.",
+    "category": "Basics",
+    "code": "<?php\n// php greet.php Prabh\n$name = $argv[1] ?? \"Guest\";\necho \"Hello, $name!\\n\";\n// Input lena:\n// echo \"Naam likho: \";\n// $input = trim(fgets(STDIN));\n?>",
+    "functions": [
+      "fgets"
+    ],
+    "id": "cli-argv",
+    "keywords": [
+      "cli",
+      "terminal",
+      "command line",
+      "argv",
+      "argc",
+      "input lena",
+      "terminal se chalana"
+    ],
+    "pitfall": "$argv sirf CLI me milta hai, browser me nahi. Browser me input ke liye $_GET/$_POST use karo.",
+    "related": [
+      "get-post-forms",
+      "hello-first-program"
+    ],
+    "title": "CLI - terminal se PHP chalana aur $argv",
+    "output": "Hello, Guest!",
+    "runnable": true
+  },
+  {
+    "answer": "include file nahi mili to warning dekar aage chalega, require file nahi mili to fatal error dekar ruk jayega. _once wala version file ko ek hi baar jodta hai, dobara jodne se function dobara define hone ka error nahi aata.",
+    "category": "Basics",
+    "code": "<?php\nrequire_once \"config.php\";\ninclude_once \"header.php\";\necho \"Page content\";\ninclude_once \"footer.php\";\n?>",
+    "functions": [
+      "include",
+      "require"
+    ],
+    "id": "include-require",
+    "keywords": [
+      "include",
+      "require",
+      "include_once",
+      "require_once",
+      "file jodna",
+      "header footer"
+    ],
+    "pitfall": "Function ya class wali file ko bina _once ke do baar joda to 'cannot redeclare' error aayega.",
+    "related": [
+      "namespace-autoload",
+      "composer-autoload"
+    ],
+    "title": "include / require - ek file ko dusri me jodna",
+    "output": null,
+    "runnable": false
+  },
+  {
+    "answer": "Seekhte waqt error_reporting(E_ALL) aur display_errors on rakho taaki galti dikhe. Live site par display_errors off rakho aur error_log me likho. var_dump() type + value dikhata hai, print_r() array ko padhne layak dikhata hai.",
+    "category": "Basics",
+    "code": "<?php\nerror_reporting(E_ALL);\nini_set('display_errors', '1');\n$data = ['a' => 1, 'b' => 2];\nvar_dump($data);\nprint_r($data);\n// Production me:\n// ini_set('display_errors', '0');\n// ini_set('log_errors', '1');\n?>",
+    "functions": [
+      "var_dump",
+      "print_r",
+      "error_reporting",
+      "error_log"
+    ],
+    "id": "errors-debugging",
+    "keywords": [
+      "error",
+      "errors",
+      "debugging",
+      "debug",
+      "var_dump",
+      "print_r",
+      "error_reporting",
+      "error dikhana",
+      "bug"
+    ],
+    "pitfall": "Live site par display_errors on rakhna galat hai - user ko andar ki jaankari dikh jayegi. Wahan sirf log karo.",
+    "related": [
+      "error-handling-exceptions"
+    ],
+    "title": "Errors aur debugging - var_dump, error reporting",
+    "output": null,
+    "runnable": true
+  },
+  {
+    "answer": "date() se aaj ki date/time format me milti hai. DateTime class se date jodna/ghatana aur compare karna aasan hai. India ke liye timezone Asia/Kolkata set karo, warna server ka time dikhega.",
+    "category": "Basics",
+    "code": "<?php\ndate_default_timezone_set(\"Asia/Kolkata\");\necho date(\"d-m-Y H:i\"); // 29-10-2026 10:02\n$today = new DateTime();\n$today->modify(\"+7 days\");\necho $today->format(\"d-m-Y\");\n$ts = strtotime(\"2026-11-02\");\necho date(\"d F Y\", $ts);\n?>",
+    "functions": [
+      "date",
+      "time",
+      "strtotime"
+    ],
+    "id": "date-time",
+    "keywords": [
+      "date",
+      "time",
+      "datetime",
+      "timezone",
+      "aaj ki date",
+      "date format",
+      "strtotime"
+    ],
+    "pitfall": "date() bina timezone set kiye server ke timezone ka time dega - India me hamesha Asia/Kolkata set karo.",
+    "related": [
+      "math"
+    ],
+    "title": "Date aur time - date(), DateTime, timezone",
+    "output": null,
+    "runnable": true
+  },
+  {
+    "answer": "round() nearest, ceil() upar, floor() neeche round karta hai. Security wale kaam (OTP, token) ke liye rand() nahi, random_int() use karo - wo cryptographically safe hai.",
+    "category": "Basics",
+    "code": "<?php\necho round(4.6);  // 5\necho ceil(4.1);   // 5\necho floor(4.9);  // 4\necho abs(-7);     // 7\necho pow(2, 10);  // 1024\necho max(3, 9, 4); // 9\n$otp = random_int(100000, 999999);\n?>",
+    "functions": [
+      "round",
+      "ceil",
+      "floor",
+      "abs",
+      "pow",
+      "min",
+      "max",
+      "random_int",
+      "rand"
+    ],
+    "id": "math",
+    "keywords": [
+      "math",
+      "round",
+      "random",
+      "ceil",
+      "floor",
+      "min max",
+      "random number",
+      "percentage"
+    ],
+    "pitfall": "OTP/password reset token ke liye rand() mat use karo - wo predict ho sakta hai. random_int() use karo.",
+    "related": [
+      "type-casting"
+    ],
+    "title": "Math - round, random, min/max",
+    "output": "554710249",
+    "runnable": true
+  },
+  {
+    "answer": "Value ke aage (int), (float), (string) likh kar type badla jata hai. File ke upar declare(strict_types=1); likhne se function me galat type aane par error aayega, chupchaap convert nahi hoga.",
+    "category": "Basics",
+    "code": "<?php\ndeclare(strict_types=1);\n$num = (int) \"42\";      // 42\n$price = (float) \"99.5\"; // 99.5\n$text = (string) 123;     // \"123\"\n$age = intval($_GET['age'] ?? 0);\n?>",
+    "functions": [
+      "intval",
+      "floatval",
+      "strval"
+    ],
+    "id": "type-casting",
+    "keywords": [
+      "type casting",
+      "cast",
+      "intval",
+      "floatval",
+      "strval",
+      "strict_types",
+      "type convert"
+    ],
+    "pitfall": "(int) \"abc\" = 0 ho jata hai bina error ke - user input ko cast karne se pehle validate karo.",
+    "related": [
+      "variables-data-types",
+      "validation-sanitization"
+    ],
+    "title": "Type casting aur strict types",
+    "output": null,
+    "runnable": true
+  }
+]

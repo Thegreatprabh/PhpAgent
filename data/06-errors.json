@@ -1,0 +1,105 @@
+[
+  {
+    "id": "assertions-validation-errors",
+    "category": "Errors & Exceptions",
+    "title": "Defensive checks - assert, ValueError, and failing fast",
+    "keywords": [
+      "assert",
+      "valueerror",
+      "invalidargumentexception",
+      "fail fast",
+      "guard clause",
+      "validation error throw"
+    ],
+    "functions": [
+      "assert"
+    ],
+    "answer": "Fail fast when an argument is invalid: throw InvalidArgumentException with a clear message instead of letting bad data travel deeper. assert() is for checks during development and can be disabled in production, so never use it for security or input validation.",
+    "code": "function divideKb(float $a, float $b): float {\n    if ($b === 0.0) {\n        throw new InvalidArgumentException(\"Divisor must not be zero.\");\n    }\n    return $a / $b;\n}\necho divideKb(10, 2);\ntry {\n    divideKb(10, 0);\n} catch (InvalidArgumentException $e) {\n    echo $e->getMessage();\n}\n",
+    "output": "5Divisor must not be zero.",
+    "runnable": true,
+    "pitfall": "assert() is disabled when zend.assertions is -1 in production. Code that depends on assert for correctness will silently stop checking.",
+    "related": [
+      "error-handling-exceptions",
+      "validation-sanitization"
+    ]
+  },
+  {
+    "id": "error-handling-exceptions",
+    "category": "Errors & Exceptions",
+    "title": "Exceptions - try, catch, finally, and custom exception classes",
+    "keywords": [
+      "try catch",
+      "exception",
+      "exceptions",
+      "throw",
+      "finally",
+      "custom exception",
+      "try catch kaise use kare"
+    ],
+    "functions": [],
+    "answer": "Throw an exception when something cannot continue normally, catch it where you can handle it, and use finally for cleanup that must run either way. Catch the most specific exception type first. Custom exception classes let callers handle your errors separately from generic ones.",
+    "code": "class KbPaymentFailed extends Exception {}\nfunction chargeKb(float $amount): void {\n    if ($amount <= 0) {\n        throw new KbPaymentFailed(\"Amount must be positive.\");\n    }\n}\ntry {\n    chargeKb(0);\n} catch (KbPaymentFailed $e) {\n    echo \"Payment problem: \" . $e->getMessage();\n} finally {\n    echo \" Done.\";\n}\n",
+    "output": "Payment problem: Amount must be positive. Done.",
+    "runnable": true,
+    "pitfall": "Catching the generic Exception class first swallows every specific type below it. Order catch blocks from most specific to most general.",
+    "related": [
+      "errors-debugging",
+      "error-types-levels"
+    ]
+  },
+  {
+    "id": "error-types-levels",
+    "category": "Errors & Exceptions",
+    "title": "Error types - warnings, notices, fatal errors, and error handling",
+    "keywords": [
+      "error types",
+      "warning",
+      "notice",
+      "fatal error",
+      "error levels",
+      "E_ALL",
+      "set_error_handler",
+      "error types kaise samjhe"
+    ],
+    "functions": [
+      "set_error_handler",
+      "trigger_error",
+      "error_reporting"
+    ],
+    "answer": "Notices and warnings let the script continue, while fatal errors stop it. Most runtime problems in modern PHP are Error exceptions, such as TypeError, which you can catch. set_error_handler converts warnings and notices into exceptions so they cannot pass silently.",
+    "code": "set_error_handler(function (int $level, string $message): bool {\n    throw new ErrorException($message, 0, $level);\n});\ntry {\n    $value = $undefinedKbVariable;\n} catch (Throwable $e) {\n    echo \"Caught: \" . $e->getMessage();\n}\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "Catching Throwable around large blocks hides real bugs. Catch narrowly, log the error, and fix the cause instead of swallowing it.",
+    "related": [
+      "error-handling-exceptions",
+      "errors-debugging"
+    ]
+  },
+  {
+    "id": "logging-errors",
+    "category": "Errors & Exceptions",
+    "title": "Logging errors - error_log and structured log lines",
+    "keywords": [
+      "error_log",
+      "logging",
+      "log errors",
+      "error log file",
+      "log kaise kare",
+      "structured logging"
+    ],
+    "functions": [
+      "error_log"
+    ],
+    "answer": "Write errors to the server error log with error_log instead of printing them to users. Include a timestamp, a short context label, and the error message. Never log passwords, tokens, or full card numbers.",
+    "code": "$logFile = sys_get_temp_dir() . \"/kb-demo.log\";\nerror_log(\"[\" . date(\"Y-m-d H:i:s\") . \"] order failed: payment declined\\n\", 3, $logFile);\necho file_exists($logFile) ? \"logged\" : \"missing\";\nunlink($logFile);\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "Logging user input without limits lets an attacker flood the disk. Keep log lines short and rotate log files.",
+    "related": [
+      "errors-debugging",
+      "error-types-levels"
+    ]
+  }
+]

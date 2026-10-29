@@ -1,0 +1,72 @@
+[
+  {
+    "id": "arrow-functions",
+    "category": "Functions",
+    "title": "Arrow functions - fn() syntax and automatic capture",
+    "keywords": [
+      "arrow function",
+      "arrow functions",
+      "fn syntax",
+      "short closure",
+      "arrow function kaise likhe"
+    ],
+    "functions": [],
+    "answer": "Arrow functions are one-expression closures written with fn. They capture variables from the surrounding scope automatically, by value. They cannot contain multiple statements, so anything longer than one expression needs a full closure.",
+    "code": "$numbers = [1, 2, 3, 4];\n$squares = array_map(fn($n) => $n * $n, $numbers);\nprint_r($squares);\n$factor = 10;\n$scaled = array_map(fn($n) => $n * $factor, $numbers);\nprint_r($scaled);\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "An arrow function cannot have a statement body or a return keyword. fn($n) => { return $n; } is a parse error.",
+    "related": [
+      "closures-callbacks",
+      "array-map-filter"
+    ]
+  },
+  {
+    "id": "closures-callbacks",
+    "category": "Functions",
+    "title": "Closures and callbacks - anonymous functions and use()",
+    "keywords": [
+      "closure",
+      "closures",
+      "callback",
+      "anonymous function",
+      "use variable closure",
+      "closure kaise banaye"
+    ],
+    "functions": [],
+    "answer": "A closure is a function without a name, stored in a variable. It cannot see outside variables unless you list them in use(). Since PHP 7.4, arrow functions capture outside variables automatically, by value.",
+    "code": "$tax = 0.18;\n$withTax = function (float $price) use ($tax): float {\n    return $price * (1 + $tax);\n};\necho $withTax(100);\n$double = fn($n) => $n * 2;\necho $double(21);\n",
+    "output": "11842",
+    "runnable": true,
+    "pitfall": "use() copies the variable's value at definition time. Changing the outer variable later does not change what the closure sees, unless you capture by reference with use (&$var).",
+    "related": [
+      "array-map-filter",
+      "arrow-functions"
+    ]
+  },
+  {
+    "id": "functions-variadic",
+    "category": "Functions",
+    "title": "Variadic functions and named arguments",
+    "keywords": [
+      "variadic",
+      "func_get_args",
+      "named arguments",
+      "variable arguments",
+      "spread function",
+      "func_get_args kaise use kare"
+    ],
+    "functions": [
+      "func_get_args"
+    ],
+    "answer": "A ... parameter collects any number of extra arguments into an array. Named arguments let callers pass values by parameter name, in any order, which makes calls with many optional settings readable.",
+    "code": "function total(float ...$numbers): float {\n    return array_sum($numbers);\n}\necho total(10, 20, 30);\nfunction greetUser(string $name, string $greeting = \"Hello\"): string {\n    return \"$greeting, $name\";\n}\necho greetUser(name: \"Prabh\", greeting: \"Sat Sri Akal\");\n",
+    "output": "60Sat Sri Akal, Prabh",
+    "runnable": true,
+    "pitfall": "A variadic parameter must be the last parameter. Putting another parameter after ... is a parse error.",
+    "related": [
+      "closures-callbacks",
+      "named-arguments"
+    ]
+  }
+]

@@ -1,0 +1,75 @@
+[
+  {
+    "id": "composer-autoload",
+    "category": "Composer & Autoloading",
+    "title": "Composer - installing packages and using vendor/autoload.php",
+    "keywords": [
+      "composer",
+      "composer install",
+      "composer require",
+      "autoload",
+      "vendor autoload",
+      "composer kaise use kare",
+      "package install"
+    ],
+    "functions": [],
+    "answer": "Composer manages PHP packages. composer require adds a package and records it in composer.json and composer.lock. Every script then includes vendor/autoload.php once, and all installed classes load automatically. Commit composer.json and composer.lock, never the vendor folder.",
+    "code": "use Monolog\\Logger;\nuse Monolog\\Handler\\StreamHandler;\n\nrequire __DIR__ . \"/vendor/autoload.php\";\n\n$log = new Logger(\"app\");\n$log->pushHandler(new StreamHandler(\"php://stdout\"));\n$log->info(\"Composer autoload works.\");",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Running composer update on a live server can install untested new versions. Use composer install on servers, which reads the exact locked versions.",
+    "related": [
+      "psr4-autoloading",
+      "namespace-autoload"
+    ]
+  },
+  {
+    "id": "namespace-autoload",
+    "category": "Composer & Autoloading",
+    "title": "Manual autoloading with spl_autoload_register",
+    "keywords": [
+      "spl_autoload_register",
+      "manual autoload",
+      "autoload function",
+      "custom autoloader",
+      "autoload without composer"
+    ],
+    "functions": [
+      "spl_autoload_register"
+    ],
+    "answer": "spl_autoload_register registers a function that PHP calls whenever an unknown class is needed. Convert the class name to a file path and require it. This is useful for tiny projects without Composer, but PSR-4 through Composer is the standard for anything larger.",
+    "code": "spl_autoload_register(function (string $class): void {\n    $file = __DIR__ . \"/src/\" . str_replace(\"\\\\\", \"/\", $class) . \".php\";\n    if (file_exists($file)) {\n        require $file;\n    }\n});\n$service = new Shop\\OrderService();",
+    "output": null,
+    "runnable": false,
+    "pitfall": "An autoloader that requires a missing file without checking file_exists first turns a typo into a fatal error with a confusing message. Check existence and let the next autoloader try.",
+    "related": [
+      "psr4-autoloading",
+      "include-require"
+    ]
+  },
+  {
+    "id": "psr4-autoloading",
+    "category": "Composer & Autoloading",
+    "title": "PSR-4 autoloading - mapping namespaces to folders",
+    "keywords": [
+      "psr-4",
+      "psr4",
+      "autoloading",
+      "autoload psr-4",
+      "namespace folder mapping",
+      "autoload kaise banaye"
+    ],
+    "functions": [
+      "spl_autoload_register"
+    ],
+    "answer": "PSR-4 maps a namespace prefix to a folder, so App\\Shop\\Order loads from src/Shop/Order.php. Declare the mapping in composer.json, run composer dump-autoload, and never write manual require lines for your own classes again.",
+    "code": "// composer.json (JSON file, not PHP):\n// {\n//   \"autoload\": {\n//     \"psr-4\": { \"App\\\\\": \"src/\" }\n//   }\n// }\nrequire __DIR__ . \"/vendor/autoload.php\";\n$order = new App\\Shop\\OrderService();",
+    "output": null,
+    "runnable": false,
+    "pitfall": "PSR-4 is case-sensitive and the class name must match the file name exactly. A class called OrderService in a file named orderservice.php will not load on Linux.",
+    "related": [
+      "composer-autoload",
+      "namespaces"
+    ]
+  }
+]

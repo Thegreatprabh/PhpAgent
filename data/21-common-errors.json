@@ -1,0 +1,119 @@
+[
+  {
+    "id": "error-allowed-memory",
+    "category": "Common Errors",
+    "title": "Fix: Allowed memory size exhausted - large loops and fetchAll",
+    "keywords": [
+      "allowed memory size",
+      "memory exhausted",
+      "out of memory",
+      "memory limit",
+      "memory error fix"
+    ],
+    "functions": [
+      "ini_get",
+      "memory_get_peak_usage"
+    ],
+    "answer": "The script used more memory than the limit allows, usually by loading a whole table with fetchAll or building a giant string in a loop. Process rows one at a time, unset large variables when done, and raise the limit only after fixing the cause. Raising the limit alone just delays the same crash.",
+    "code": "echo \"Limit: \" . ini_get(\"memory_limit\") . \"\\n\";\n$sum = 0;\nfor ($i = 0; $i < 1000; $i++) {\n    $sum += $i;\n}\necho $sum;\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "Setting memory_limit to -1 in production removes the safety net entirely. One bad request can then consume all server memory and take down every other request.",
+    "related": [
+      "profiling-slow-code",
+      "pdo-fetch-modes"
+    ]
+  },
+  {
+    "id": "error-call-undefined-function",
+    "category": "Common Errors",
+    "title": "Fix: Call to undefined function - typo, missing file, or missing extension",
+    "keywords": [
+      "undefined function",
+      "call to undefined function",
+      "function not found",
+      "undefined function fix"
+    ],
+    "functions": [],
+    "answer": "PHP cannot find the function because of a typo, a missing include, a missing Composer autoload entry, or a missing extension. Check the spelling and case, confirm the file is loaded, and confirm the extension with extension_loaded. Namespaced code must import the function or use its full name.",
+    "code": "function kbAddNumbers(int $a, int $b): int {\n    return $a + $b;\n}\necho kbAddNumbers(2, 3);\nvar_dump(function_exists(\"kbAddNumbers\"));\nvar_dump(function_exists(\"kbNoSuchFunctionXyz\"));\n",
+    "output": "5bool(true)\nbool(false)",
+    "runnable": true,
+    "pitfall": "Calling a function before its file is included fails even though the file exists in the project. Autoloading or a require at the top prevents this class of error.",
+    "related": [
+      "include-require",
+      "deployment-checklist"
+    ]
+  },
+  {
+    "id": "error-headers-sent",
+    "category": "Common Errors",
+    "title": "Fix: Headers already sent - output before header, session, or cookie",
+    "keywords": [
+      "headers already sent",
+      "cannot modify header",
+      "header error",
+      "headers sent fix",
+      "output before header"
+    ],
+    "functions": [
+      "header",
+      "headers_sent"
+    ],
+    "answer": "Headers must be sent before any output, including a blank line or space before the opening PHP tag. Find the file and line named in the warning, remove the early output, and move session_start, setcookie, and header calls to the top. Output buffering with ob_start can hide the problem, but fixing the order is the real solution.",
+    "code": "// Correct order: headers first, output after.\n// header(\"Location: /home.php\");\n// exit;\n// $name = \"Prabh\";\n// echo \"Hello, $name\";\necho \"Headers must come before any echo.\";\n",
+    "output": "Headers must come before any echo.",
+    "runnable": true,
+    "pitfall": "A UTF-8 byte-order mark at the start of a file counts as output and triggers this error invisibly. Save PHP files as UTF-8 without BOM.",
+    "related": [
+      "sessions",
+      "cookies"
+    ]
+  },
+  {
+    "id": "error-parse-syntax",
+    "category": "Common Errors",
+    "title": "Fix: Parse error / syntax error - finding the real line",
+    "keywords": [
+      "parse error",
+      "syntax error",
+      "unexpected token",
+      "parse error fix",
+      "syntax error kaise fix kare"
+    ],
+    "functions": [],
+    "answer": "A parse error names the token PHP did not expect, but the real mistake is usually on the line above: a missing semicolon, an unclosed bracket, or a quote that never closed. Read upward from the reported line, and run php -l on the file to confirm the fix.",
+    "code": "$items = [\"apple\", \"banana\"];\necho count($items);\necho \"Done.\";\n",
+    "output": "2Done.",
+    "runnable": true,
+    "pitfall": "Editing the reported line instead of the line above it moves the error around without fixing it. Count brackets and quotes from the top of the block.",
+    "related": [
+      "errors-debugging",
+      "error-undefined-index"
+    ]
+  },
+  {
+    "id": "error-undefined-index",
+    "category": "Common Errors",
+    "title": "Fix: Undefined array key - reading a missing key",
+    "keywords": [
+      "undefined array key",
+      "undefined index",
+      "array key warning",
+      "undefined key fix",
+      "warning undefined array key"
+    ],
+    "functions": [
+      "isset"
+    ],
+    "answer": "This warning means the code read an array key that does not exist. Fix it by reading with ?? or checking isset first. The warning is the symptom, so also ask why the key is missing: a renamed field, a failed query, or a form field that was never sent.",
+    "code": "$user = [\"name\" => \"Prabh\"];\n// Wrong: echo $user[\"email\"];\necho $user[\"email\"] ?? \"no email\";\necho isset($user[\"email\"]) ? $user[\"email\"] : \"missing\";\n",
+    "output": "no emailmissing",
+    "runnable": true,
+    "pitfall": "Silencing the warning with @ hides the symptom and the cause. Fix the read, do not suppress the warning.",
+    "related": [
+      "arrays-basics",
+      "validation-sanitization"
+    ]
+  }
+]

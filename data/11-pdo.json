@@ -1,0 +1,143 @@
+[
+  {
+    "id": "pdo-connect",
+    "category": "PDO & Databases",
+    "title": "PDO connection - DSN, exceptions, and charset",
+    "keywords": [
+      "pdo",
+      "pdo connect",
+      "database connect",
+      "mysql connect pdo",
+      "dsn",
+      "database connection kaise kare",
+      "pdo mysql connect"
+    ],
+    "functions": [],
+    "answer": "Create one PDO object with a DSN naming the driver, host, and database. Set the error mode to exceptions so failures throw instead of failing silently, and use utf8mb4 so emoji and Hindi text store correctly. Keep credentials in environment variables, never in code. This example is syntax-checked only because it needs a MySQL server.",
+    "code": "$dsn = \"mysql:host=localhost;dbname=shop;charset=utf8mb4\";\n$pdo = new PDO($dsn, $_ENV[\"DB_USER\"] ?? \"app\", $_ENV[\"DB_PASS\"] ?? \"secret\", [\n    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,\n    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,\n    PDO::ATTR_EMULATE_PREPARES => false,\n]);\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "The default PDO error mode is silent, so failed queries return false with no message. Always set ERRMODE_EXCEPTION when you create the connection.",
+    "related": [
+      "pdo-prepared-statements",
+      "sql-injection-prevention"
+    ]
+  },
+  {
+    "id": "pdo-fetch-modes",
+    "category": "PDO & Databases",
+    "title": "PDO fetch modes - assoc, object, class, and column",
+    "keywords": [
+      "fetch assoc",
+      "fetch object",
+      "fetch_class",
+      "fetchall",
+      "fetch mode",
+      "pdo fetch kaise kare"
+    ],
+    "functions": [],
+    "answer": "FETCH_ASSOC returns rows as arrays, FETCH_OBJ as objects, and FETCH_CLASS fills an object of your class. Set the default fetch mode once on the connection so every query behaves the same. This example is syntax-checked only because it needs a database.",
+    "code": "$rows = $pdo->query(\"SELECT id, name FROM users\")->fetchAll(PDO::FETCH_ASSOC);\n$objects = $pdo->query(\"SELECT id, name FROM users\")->fetchAll(PDO::FETCH_OBJ);\n$names = $pdo->query(\"SELECT name FROM users\")->fetchAll(PDO::FETCH_COLUMN);\n$one = $pdo->query(\"SELECT name FROM users LIMIT 1\")->fetchColumn();\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "fetchAll on a huge table loads every row into memory at once. Loop with fetch in a while loop when a result can be large.",
+    "related": [
+      "pdo-prepared-statements",
+      "pdo-connect"
+    ]
+  },
+  {
+    "id": "pdo-insert-update",
+    "category": "PDO & Databases",
+    "title": "PDO insert, update, delete - lastInsertId and row counts",
+    "keywords": [
+      "pdo insert",
+      "pdo update",
+      "pdo delete",
+      "lastinsertid",
+      "rowcount",
+      "insert kaise kare pdo",
+      "update query pdo"
+    ],
+    "functions": [],
+    "answer": "Use execute with an array of values for insert, update, and delete. lastInsertId returns the new auto-increment ID, and rowCount tells how many rows an update or delete changed. Wrap related writes in a transaction so they succeed or fail together. This example is syntax-checked only because it needs a database.",
+    "code": "$pdo->beginTransaction();\n$ins = $pdo->prepare(\"INSERT INTO users (name, email) VALUES (:name, :email)\");\n$ins->execute([\":name\" => \"Prabh\", \":email\" => \"prabh@example.com\"]);\n$newId = $pdo->lastInsertId();\n$upd = $pdo->prepare(\"UPDATE users SET city = :city WHERE id = :id\");\n$upd->execute([\":city\" => \"Mohali\", \":id\" => $newId]);\n$changed = $upd->rowCount();\n$pdo->commit();\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Forgetting commit leaves the transaction open and locks rows. Always commit on success and roll back in a catch block on failure.",
+    "related": [
+      "pdo-prepared-statements",
+      "pdo-transactions"
+    ]
+  },
+  {
+    "id": "pdo-pagination",
+    "category": "PDO & Databases",
+    "title": "Pagination with PDO - LIMIT, OFFSET, and total counts",
+    "keywords": [
+      "pagination",
+      "limit offset",
+      "paginate",
+      "page wise data",
+      "pagination kaise kare",
+      "limit offset pdo"
+    ],
+    "functions": [],
+    "answer": "Pagination reads one page with LIMIT and OFFSET, and counts the total separately so the UI can show page numbers. Bind LIMIT and OFFSET as integers, because some drivers reject them as strings. This example is syntax-checked only because it needs a database.",
+    "code": "$page = max(1, (int) ($_GET[\"page\"] ?? 1));\n$perPage = 20;\n$offset = ($page - 1) * $perPage;\n$stmt = $pdo->prepare(\"SELECT id, name FROM users ORDER BY id LIMIT :limit OFFSET :offset\");\n$stmt->bindValue(\":limit\", $perPage, PDO::PARAM_INT);\n$stmt->bindValue(\":offset\", $offset, PDO::PARAM_INT);\n$stmt->execute();\n$rows = $stmt->fetchAll();\n$total = (int) $pdo->query(\"SELECT COUNT(*) FROM users\")->fetchColumn();\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Deep OFFSET pages get slower as the offset grows, because the database still scans the skipped rows. For large tables, paginate by the last seen ID instead.",
+    "related": [
+      "pdo-fetch-modes",
+      "pdo-prepared-statements"
+    ]
+  },
+  {
+    "id": "pdo-prepared-statements",
+    "category": "PDO & Databases",
+    "title": "PDO prepared statements - named and positional placeholders",
+    "keywords": [
+      "pdo prepare",
+      "pdo execute",
+      "named placeholder",
+      "positional placeholder",
+      "bindparam",
+      "pdo query kaise kare"
+    ],
+    "functions": [],
+    "answer": "Prepare once, execute with values. Named placeholders like :email read clearly, positional placeholders use ? in order. fetch returns one row, fetchAll returns all rows, and fetchColumn returns one value. This example is syntax-checked only because it needs a database.",
+    "code": "$stmt = $pdo->prepare(\"SELECT id, name FROM users WHERE age > :age ORDER BY name\");\n$stmt->execute([\":age\" => 18]);\n$users = $stmt->fetchAll();\n$stmt2 = $pdo->prepare(\"SELECT COUNT(*) FROM users WHERE city = ?\");\n$stmt2->execute([\"Chandigarh\"]);\n$total = $stmt2->fetchColumn();\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Reusing a statement after fetchAll without re-executing returns no rows. Execute again with new values before fetching.",
+    "related": [
+      "pdo-connect",
+      "pdo-insert-update"
+    ]
+  },
+  {
+    "id": "pdo-transactions",
+    "category": "PDO & Databases",
+    "title": "PDO transactions - begin, commit, and rollback",
+    "keywords": [
+      "transaction",
+      "transactions",
+      "beginTransaction",
+      "commit",
+      "rollback",
+      "transaction kaise kare",
+      "atomic database"
+    ],
+    "functions": [],
+    "answer": "A transaction groups several writes into one atomic unit: either all of them land, or none do. Start with beginTransaction, commit on success, and roll back when any step throws. Never leave a transaction open across user input or slow work. This example is syntax-checked only because it needs a database.",
+    "code": "try {\n    $pdo->beginTransaction();\n    $pdo->exec(\"UPDATE accounts SET balance = balance - 100 WHERE id = 1\");\n    $pdo->exec(\"UPDATE accounts SET balance = balance + 100 WHERE id = 2\");\n    $pdo->commit();\n} catch (Throwable $e) {\n    if ($pdo->inTransaction()) {\n        $pdo->rollBack();\n    }\n    throw $e;\n}\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Calling rollBack when no transaction is active throws an exception of its own. Guard it with inTransaction.",
+    "related": [
+      "pdo-insert-update",
+      "pdo-connect"
+    ]
+  }
+]

@@ -1,0 +1,130 @@
+[
+  {
+    "id": "cli-cron-script",
+    "category": "Performance, CLI & Deployment",
+    "title": "CLI and cron scripts - long tasks, arguments, and locking",
+    "keywords": [
+      "cron",
+      "cli script",
+      "scheduled task",
+      "cron job",
+      "long task",
+      "cron kaise chalaye",
+      "cli cron"
+    ],
+    "functions": [
+      "flock"
+    ],
+    "answer": "Run long or repeated work from the command line, not from a web request that can time out. Accept arguments from $argv, print progress to STDOUT, and lock the script with flock so two cron runs never overlap and double-process the same work.",
+    "code": "$lockFile = sys_get_temp_dir() . \"/kb-cron.lock\";\n$lock = fopen($lockFile, \"c\");\nif (!flock($lock, LOCK_EX | LOCK_NB)) {\n    echo \"Already running.\\n\";\n    exit(0);\n}\n$limit = (int) ($argv[1] ?? 10);\necho \"Processing $limit items.\\n\";\nflock($lock, LOCK_UN);\nfclose($lock);\n",
+    "output": "Processing 10 items.",
+    "runnable": true,
+    "pitfall": "A cron job with no lock can start again while the previous run is still working, doubling charges, emails, or stock changes. Always lock, and always release the lock.",
+    "related": [
+      "cli-argv",
+      "deployment-checklist"
+    ]
+  },
+  {
+    "id": "deployment-checklist",
+    "category": "Performance, CLI & Deployment",
+    "title": "Deployment checklist - PHP version, extensions, errors, and permissions",
+    "keywords": [
+      "deployment",
+      "deploy",
+      "production checklist",
+      "deploy kaise kare",
+      "php version check",
+      "production setup"
+    ],
+    "functions": [
+      "phpversion",
+      "extension_loaded"
+    ],
+    "answer": "Before going live, confirm the PHP version and required extensions, turn display_errors off, set the right timezone, and make only the public folder web-accessible. Run this self-check on the server and fix every failure before announcing the launch.",
+    "code": "echo \"PHP \" . PHP_VERSION . \"\\n\";\nforeach ([\"json\", \"pdo\", \"mbstring\", \"curl\"] as $ext) {\n    echo $ext . \": \" . (extension_loaded($ext) ? \"yes\" : \"no\") . \"\\n\";\n}\necho \"display_errors: \" . ini_get(\"display_errors\") . \"\\n\";\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "Developing on one PHP version and deploying on another is the most common source of launch-day parse errors. Match versions exactly, including minor version.",
+    "related": [
+      "opcache-performance",
+      "env-config"
+    ]
+  },
+  {
+    "id": "env-config",
+    "category": "Performance, CLI & Deployment",
+    "title": "Environment config - $_ENV, getenv, and keeping secrets out of code",
+    "keywords": [
+      "environment variables",
+      "env",
+      "getenv",
+      "dotenv",
+      "secrets",
+      "config env kaise rakhe",
+      "env file"
+    ],
+    "functions": [
+      "getenv"
+    ],
+    "answer": "Read secrets and per-server settings from environment variables, never from code or version control. Use $_ENV or getenv with a safe default for non-secrets, and fail loudly at startup when a required secret is missing. A .env file is for local development only and must never be committed.",
+    "code": "$dbPass = $_ENV[\"DB_PASS\"] ?? getenv(\"DB_PASS\") ?: null;\nif ($dbPass === null) {\n    throw new RuntimeException(\"DB_PASS is not set.\");\n}\necho \"Config loaded.\";\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "A default password in code becomes the real password the day someone forgets to set the variable. Required secrets must fail startup, not fall back silently.",
+    "related": [
+      "pdo-connect",
+      "deployment-checklist"
+    ]
+  },
+  {
+    "id": "http-client-alternative",
+    "category": "Performance, CLI & Deployment",
+    "title": "HTTP without cURL - file_get_contents with a stream context",
+    "keywords": [
+      "file_get_contents http",
+      "stream context",
+      "http without curl",
+      "fetch without curl",
+      "stream_context_create"
+    ],
+    "functions": [
+      "file_get_contents",
+      "stream_context_create"
+    ],
+    "answer": "file_get_contents with a stream context can make simple GET requests when cURL is unavailable. It is fine for small reads with a timeout, but it gives weaker error handling than cURL, so prefer cURL for APIs that matter. This example is syntax-checked only because it makes a real network call.",
+    "code": "$context = stream_context_create([\n    \"http\" => [\"method\" => \"GET\", \"timeout\" => 5, \"ignore_errors\" => true],\n]);\n$body = file_get_contents(\"https://api.example.com/status\", false, $context);\necho $body !== false ? \"received\" : \"failed\";\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "file_get_contents returns false on failure and also returns a body on HTTP error pages when ignore_errors is true. Check $http_response_header for the real status code.",
+    "related": [
+      "curl-get",
+      "curl-post-json"
+    ]
+  },
+  {
+    "id": "opcache-performance",
+    "category": "Performance, CLI & Deployment",
+    "title": "OPcache - why PHP is fast on repeat requests and how to check it",
+    "keywords": [
+      "opcache",
+      "opcache enable",
+      "php performance",
+      "bytecode cache",
+      "opcache kaise check kare"
+    ],
+    "functions": [
+      "opcache_get_status",
+      "opcache_get_configuration"
+    ],
+    "answer": "OPcache stores compiled PHP bytecode in memory, so repeat requests skip parsing. It is on by default in most production setups and off in the CLI. Check its status with opcache_get_status, and restart PHP-FPM after deploying, or changed files may keep running old code during the revalidate window.",
+    "code": "$status = function_exists(\"opcache_get_status\") ? opcache_get_status(false) : false;\nif ($status === false) {\n    echo \"OPcache is off (normal for CLI).\";\n} else {\n    echo \"Enabled: \" . ($status[\"opcache_enabled\"] ? \"yes\" : \"no\");\n}\n",
+    "output": "OPcache is off (normal for CLI).",
+    "runnable": true,
+    "pitfall": "Deploying new files without restarting or invalidating OPcache can serve the old version for minutes. Include a cache reset in your deploy steps.",
+    "related": [
+      "profiling-slow-code",
+      "deployment-checklist"
+    ]
+  }
+]

@@ -1,0 +1,198 @@
+[
+  {
+    "id": "string-basics",
+    "category": "Strings",
+    "title": "Strings - single vs double quotes and concatenation",
+    "keywords": [
+      "string",
+      "strings",
+      "single quotes",
+      "double quotes",
+      "concatenation",
+      "string jodna",
+      "string me variable kaise likhe"
+    ],
+    "functions": [],
+    "answer": "Single-quoted strings print text exactly as written. Double-quoted strings replace $variables and interpret escape sequences like \\n. Join strings with the dot operator, never with +.",
+    "code": "$name = \"Prabh\";\necho 'Hello $name';   // prints: Hello $name\necho \"Hello $name\";   // prints: Hello Prabh\necho \"Price: \" . (10 + 5) . \" rupees\";\n",
+    "output": "Hello $nameHello PrabhPrice: 15 rupees",
+    "runnable": true,
+    "pitfall": "Using + to join strings adds numbers instead. '5' + '5' is 10, while '5' . '5' is '55'.",
+    "related": [
+      "string-functions",
+      "string-interpolation"
+    ]
+  },
+  {
+    "id": "string-compare",
+    "category": "Strings",
+    "title": "Comparing strings - strcmp, case-insensitive compare, == vs ===",
+    "keywords": [
+      "strcmp",
+      "strcasecmp",
+      "string compare",
+      "string comparison",
+      "compare strings",
+      "string barabar hai ya nahi"
+    ],
+    "functions": [
+      "strcmp",
+      "strcasecmp"
+    ],
+    "answer": "Use === when two strings must be exactly equal, including case. Use strcasecmp for a case-insensitive comparison. strcmp returns 0 when strings are equal, a negative number when the first is smaller, and a positive number otherwise.",
+    "code": "var_dump(\"apple\" === \"Apple\");\nvar_dump(strcasecmp(\"apple\", \"APPLE\") === 0);\nvar_dump(strcmp(\"apple\", \"banana\") < 0);\necho strcmp(\"cat\", \"cat\");\n",
+    "output": "bool(false)\nbool(true)\nbool(true)\n0",
+    "runnable": true,
+    "pitfall": "strcmp returns 0 for equal strings, and 0 is falsy in PHP. Never use it directly in an if condition without comparing to 0.",
+    "related": [
+      "string-search",
+      "password-verify"
+    ]
+  },
+  {
+    "id": "string-format",
+    "category": "Strings",
+    "title": "Formatting strings - sprintf, number_format, escaping output",
+    "keywords": [
+      "sprintf",
+      "printf",
+      "number_format",
+      "format string",
+      "number format",
+      "price format",
+      "sprintf kaise use kare"
+    ],
+    "functions": [
+      "sprintf",
+      "printf",
+      "number_format",
+      "htmlspecialchars"
+    ],
+    "answer": "sprintf builds a string from a template with placeholders like %s for strings and %d for integers. number_format formats money and large numbers with commas and decimals. Always escape user text with htmlspecialchars before printing it into HTML.",
+    "code": "$name = \"Prabh\";\n$price = 1234567.891;\necho sprintf(\"Hello %s, your total is Rs %.2f\", $name, $price);\necho number_format($price, 2);\necho htmlspecialchars(\"<b>Hi</b>\");\n",
+    "output": "Hello Prabh, your total is Rs 1234567.891,234,567.89&lt;b&gt;Hi&lt;/b&gt;",
+    "runnable": true,
+    "pitfall": "Printing user input directly into HTML without htmlspecialchars lets an attacker inject scripts. Escape on output, every time.",
+    "related": [
+      "xss-prevention",
+      "string-functions"
+    ]
+  },
+  {
+    "id": "string-functions",
+    "category": "Strings",
+    "title": "String functions - length, case, replace, trim, split",
+    "keywords": [
+      "strlen",
+      "str_replace",
+      "trim",
+      "explode",
+      "implode",
+      "strtolower",
+      "strtoupper",
+      "substr",
+      "string length",
+      "string replace",
+      "string ko todna",
+      "string trim kaise kare"
+    ],
+    "functions": [
+      "strlen",
+      "str_replace",
+      "trim",
+      "explode",
+      "implode",
+      "strtolower",
+      "strtoupper",
+      "substr"
+    ],
+    "answer": "strlen counts bytes, trim removes whitespace from both ends, str_replace swaps text, explode splits a string into an array and implode joins an array back into a string. substr returns part of a string.",
+    "code": "$text = \"  Hello, World!  \";\necho strlen(trim($text));            // 13\necho strtolower(\"PHP IS FUN\");       // php is fun\necho str_replace(\"World\", \"Prabh\", \"Hello, World!\");\n$parts = explode(\",\", \"a,b,c\");\necho implode(\"-\", $parts);           // a-b-c\necho substr(\"Prabhjot\", 0, 5);       // Prabh\n",
+    "output": "13php is funHello, Prabh!a-b-cPrabh",
+    "runnable": true,
+    "pitfall": "strlen counts bytes, not characters. For Hindi or emoji text it returns a larger number than the visible character count.",
+    "related": [
+      "string-basics",
+      "arrays-basics"
+    ]
+  },
+  {
+    "id": "string-interpolation",
+    "category": "Strings",
+    "title": "String interpolation and heredoc",
+    "keywords": [
+      "interpolation",
+      "heredoc",
+      "variable in string",
+      "curly braces string",
+      "multiline string",
+      "heredoc kaise likhe"
+    ],
+    "functions": [],
+    "answer": "Wrap a variable in curly braces inside a double-quoted string when it touches other text. For long multi-line text, heredoc keeps the text readable without escaping quotes.",
+    "code": "$name = \"Prabh\";\necho \"Hello, {$name} Singh!\";\n$message = <<<TEXT\nDear $name,\nYour order is ready.\nThank you!\nTEXT;\necho $message;\n",
+    "output": "Hello, Prabh Singh!Dear Prabh,\nYour order is ready.\nThank you!",
+    "runnable": true,
+    "pitfall": "Heredoc closing label must start at the very beginning of its line, with no spaces before it, or PHP reports a parse error.",
+    "related": [
+      "string-basics",
+      "string-functions"
+    ]
+  },
+  {
+    "id": "string-multibyte-note",
+    "category": "Strings",
+    "title": "Unicode text - why strlen can mislead and what to use instead",
+    "keywords": [
+      "unicode",
+      "utf-8",
+      "hindi text",
+      "multibyte",
+      "mb_strlen",
+      "emoji length",
+      "hindi string length"
+    ],
+    "functions": [
+      "mb_strlen",
+      "mb_substr"
+    ],
+    "answer": "PHP strings are byte sequences. strlen counts bytes, so Hindi text and emoji count as more than one per visible character. For character-accurate work, use the mbstring functions mb_strlen and mb_substr, and save files as UTF-8. This example is syntax-checked only because mbstring is an optional extension and may not be installed.",
+    "code": "$hindi = \"नमस्ते\";\necho strlen($hindi);      // bytes, not characters\necho mb_strlen($hindi);   // characters (needs mbstring extension)\necho mb_substr($hindi, 0, 3);\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Cutting a UTF-8 string with substr can split a character in half and produce broken output. Use mb_substr for user-facing text.",
+    "related": [
+      "string-functions",
+      "string-basics"
+    ]
+  },
+  {
+    "id": "string-search",
+    "category": "Strings",
+    "title": "Searching inside strings - strpos, str_contains, starts/ends with",
+    "keywords": [
+      "strpos",
+      "str_contains",
+      "str_starts_with",
+      "str_ends_with",
+      "string me dhoondhna",
+      "check string contains",
+      "string contains kaise check kare"
+    ],
+    "functions": [
+      "strpos",
+      "str_contains",
+      "str_starts_with",
+      "str_ends_with"
+    ],
+    "answer": "Use str_contains to check if one string is inside another. Use strpos only when you also need the position, and compare its result with === false, because position 0 means found at the start. str_starts_with and str_ends_with check the beginning and end.",
+    "code": "$email = \"prabh@example.com\";\nvar_dump(str_contains($email, \"@\"));\nvar_dump(str_starts_with($email, \"prabh\"));\nvar_dump(str_ends_with($email, \".com\"));\nvar_dump(strpos($email, \"@\") === false);\n",
+    "output": "bool(true)\nbool(true)\nbool(true)\nbool(false)",
+    "runnable": true,
+    "pitfall": "strpos returns 0 when the text is found at position 0, and 0 is falsy. Never write if (strpos(...)) without comparing to false with ===.",
+    "related": [
+      "string-functions",
+      "validation-sanitization"
+    ]
+  }
+]

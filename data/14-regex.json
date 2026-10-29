@@ -1,0 +1,82 @@
+[
+  {
+    "id": "regex-basics",
+    "category": "Regular Expressions",
+    "title": "Regex basics - preg_match, delimiters, and character classes",
+    "keywords": [
+      "regex",
+      "regular expression",
+      "preg_match",
+      "pattern match",
+      "regex kaise likhe",
+      "pattern check"
+    ],
+    "functions": [
+      "preg_match",
+      "preg_replace",
+      "preg_split"
+    ],
+    "answer": "A regex pattern sits between delimiters, usually slashes. \\d matches a digit, \\w matches a word character, + means one or more, and ^ and $ anchor the start and end. preg_match returns 1 on a match, 0 on no match, and false on an invalid pattern.",
+    "code": "var_dump(preg_match(\"/^\\\\d{10}$/\", \"9876543210\"));\nvar_dump(preg_match(\"/^\\\\d{10}$/\", \"98765\"));\nvar_dump(preg_match(\"/^[A-Za-z ]+$/\", \"Prabh Singh\"));\necho preg_replace(\"/\\\\d+/\", \"#\", \"Order 123 ready\");\n",
+    "output": "int(1)\nint(0)\nint(1)\nOrder # ready",
+    "runnable": true,
+    "pitfall": "Forgetting ^ and $ lets a pattern match part of a string. A 10-digit check without anchors accepts a 20-digit number that contains 10 digits.",
+    "related": [
+      "regex-validation",
+      "validation-sanitization"
+    ]
+  },
+  {
+    "id": "regex-replace-split",
+    "category": "Regular Expressions",
+    "title": "Regex replace and split - preg_replace, preg_split, and capture groups",
+    "keywords": [
+      "preg_replace",
+      "preg_split",
+      "capture group",
+      "regex replace",
+      "split by regex",
+      "preg_replace kaise kare"
+    ],
+    "functions": [
+      "preg_replace",
+      "preg_split",
+      "preg_match_all"
+    ],
+    "answer": "preg_replace swaps every match, with $1, $2 referring to capture groups. preg_split breaks a string on a pattern, which handles messy separators better than explode. preg_match_all collects every match into an array.",
+    "code": "echo preg_replace(\"/(\\\\d{4})-(\\\\d{2})-(\\\\d{2})/\", \"$3/$2/$1\", \"2026-10-29\");\n$parts = preg_split(\"/\\\\s*,\\\\s*/\", \"a, b ,c\");\nprint_r($parts);\npreg_match_all(\"/\\\\d+/\", \"Order 12, item 34\", $matches);\nprint_r($matches[0]);\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "Replacement strings treat $ and \\ specially. A literal dollar sign in the replacement needs escaping, or it will be read as a group reference.",
+    "related": [
+      "regex-basics",
+      "string-functions"
+    ]
+  },
+  {
+    "id": "regex-validation",
+    "category": "Regular Expressions",
+    "title": "Regex validation - emails, phone numbers, and slugs",
+    "keywords": [
+      "regex email",
+      "regex phone",
+      "validate phone",
+      "slug regex",
+      "regex validation",
+      "mobile number validate"
+    ],
+    "functions": [
+      "preg_match",
+      "filter_var"
+    ],
+    "answer": "Use a strict pattern for phone numbers and slugs, and prefer filter_var for email validation instead of a hand-written email regex, which is easy to get wrong. Keep patterns anchored and reject anything that does not match fully.",
+    "code": "var_dump(preg_match(\"/^[6-9]\\\\d{9}$/\", \"9876543210\") === 1);\nvar_dump(preg_match(\"/^[a-z0-9]+(?:-[a-z0-9]+)*$/\", \"my-first-post\") === 1);\nvar_dump(filter_var(\"prabh@example.com\", FILTER_VALIDATE_EMAIL) !== false);\n",
+    "output": "bool(true)\nbool(true)\nbool(true)",
+    "runnable": true,
+    "pitfall": "A phone pattern that accepts any 10 digits also accepts numbers starting with 0 or 1, which are not valid Indian mobile numbers. Anchor the first digit to 6-9.",
+    "related": [
+      "regex-basics",
+      "validation-sanitization"
+    ]
+  }
+]

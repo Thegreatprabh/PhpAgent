@@ -1,0 +1,139 @@
+[
+  {
+    "id": "curl-get",
+    "category": "HTTP, JSON & APIs",
+    "title": "cURL GET request - fetching a URL with timeout and error checks",
+    "keywords": [
+      "curl",
+      "curl get",
+      "curl request",
+      "fetch url",
+      "http request",
+      "curl kaise use kare",
+      "api call curl"
+    ],
+    "functions": [
+      "curl_init",
+      "curl_setopt",
+      "curl_exec",
+      "curl_close"
+    ],
+    "answer": "cURL is PHP's built-in HTTP client. Set the URL, ask for the response as a string, set a timeout so a slow server cannot hang your script, and always check for errors and the HTTP status code. This example is syntax-checked only because it makes a real network call.",
+    "code": "$ch = curl_init(\"https://api.example.com/users/1\");\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\ncurl_setopt($ch, CURLOPT_TIMEOUT, 10);\n$response = curl_exec($ch);\nif ($response === false) {\n    $error = curl_error($ch);\n    curl_close($ch);\n    throw new RuntimeException(\"cURL failed: \" . $error);\n}\n$status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);\ncurl_close($ch);\necho $status;\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "A cURL call without a timeout can block your whole request until the remote server answers. Always set CURLOPT_TIMEOUT, and check curl_error before trusting the response.",
+    "related": [
+      "curl-post-json",
+      "json-encode-decode"
+    ]
+  },
+  {
+    "id": "curl-post-json",
+    "category": "HTTP, JSON & APIs",
+    "title": "cURL POST with JSON - sending data to an API",
+    "keywords": [
+      "curl post",
+      "curl json",
+      "post json",
+      "send json api",
+      "curl post data",
+      "api post kaise kare"
+    ],
+    "functions": [
+      "curl_init",
+      "curl_setopt",
+      "curl_exec"
+    ],
+    "answer": "Encode your data with json_encode, send it as the POST body, and set the Content-Type header to application/json. Read the status code from curl_getinfo to know whether the API accepted the request. This example is syntax-checked only because it makes a real network call.",
+    "code": "$payload = json_encode([\"name\" => \"Prabh\", \"email\" => \"prabh@example.com\"]);\n$ch = curl_init(\"https://api.example.com/users\");\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\ncurl_setopt($ch, CURLOPT_POST, true);\ncurl_setopt($ch, CURLOPT_POSTFIELDS, $payload);\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\"Content-Type: application/json\"]);\ncurl_setopt($ch, CURLOPT_TIMEOUT, 10);\n$response = curl_exec($ch);\n$status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);\ncurl_close($ch);\necho $status;\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Sending an array as POSTFIELDS makes cURL use form encoding, not JSON. Encode the body yourself and set the JSON content type header.",
+    "related": [
+      "curl-get",
+      "json-encode-decode"
+    ]
+  },
+  {
+    "id": "json-encode-decode",
+    "category": "HTTP, JSON & APIs",
+    "title": "JSON - json_encode, json_decode, and error handling",
+    "keywords": [
+      "json",
+      "json_encode",
+      "json_decode",
+      "json error",
+      "array to json",
+      "json to array",
+      "json kaise banaye"
+    ],
+    "functions": [
+      "json_encode",
+      "json_decode",
+      "json_last_error_msg"
+    ],
+    "answer": "json_encode turns arrays into JSON text, and json_decode turns JSON text back into arrays or objects. Check json_last_error after every decode, or pass JSON_THROW_ON_ERROR to get an exception on bad input. Use JSON_UNESCAPED_UNICODE so Hindi text stays readable.",
+    "code": "$data = [\"name\" => \"Prabh\", \"city\" => \"Chandigarh\", \"tags\" => [\"php\", \"fintech\"]];\n$json = json_encode($data, JSON_UNESCAPED_UNICODE);\necho $json;\n$back = json_decode($json, true, 512, JSON_THROW_ON_ERROR);\necho $back[\"name\"];\n$bad = json_decode(\"{broken\", true);\nvar_dump(json_last_error() !== JSON_ERROR_NONE);\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "json_decode returns null both for the JSON value null and for broken input. Check json_last_error, or use JSON_THROW_ON_ERROR, to tell the two apart.",
+    "related": [
+      "rest-json-response",
+      "json-files-config"
+    ]
+  },
+  {
+    "id": "rest-json-response",
+    "category": "HTTP, JSON & APIs",
+    "title": "Building a JSON API response - headers, status codes, and envelope",
+    "keywords": [
+      "rest api",
+      "json response",
+      "api response",
+      "http status code",
+      "json api kaise banaye",
+      "api endpoint"
+    ],
+    "functions": [
+      "header",
+      "http_response_code",
+      "json_encode"
+    ],
+    "answer": "Set the Content-Type header to application/json, set the right HTTP status code, and return a consistent envelope with data and error fields. Never echo anything before the headers, and never mix HTML into a JSON response. This example is syntax-checked only because it sends HTTP headers.",
+    "code": "header(\"Content-Type: application/json; charset=utf-8\");\nhttp_response_code(200);\necho json_encode([\n    \"ok\" => true,\n    \"data\" => [\"id\" => 1, \"name\" => \"Prabh\"],\n    \"error\" => null,\n]);\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "A stray echo, warning, or blank line before the JSON breaks every client that parses it. Keep API scripts free of HTML and debug output.",
+    "related": [
+      "json-encode-decode",
+      "get-post-forms"
+    ]
+  },
+  {
+    "id": "xml-simplexml",
+    "category": "HTTP, JSON & APIs",
+    "title": "Reading XML - SimpleXML and converting to arrays",
+    "keywords": [
+      "xml",
+      "simplexml",
+      "read xml",
+      "parse xml",
+      "xml to array",
+      "xml kaise padhe"
+    ],
+    "functions": [
+      "simplexml_load_string",
+      "simplexml_load_file"
+    ],
+    "answer": "SimpleXML turns XML text into objects you can read with -> and foreach. Cast values to string or int before using them. For untrusted XML, disable external entity loading behaviour by never passing user XML to parsers that expand entities, and prefer JSON for new integrations. This example is syntax-checked only because it needs the xml extension.",
+    "code": "$xmlText = \"<shop><item><name>Pen</name><price>10</price></item></shop>\";\n$xml = simplexml_load_string($xmlText);\necho (string) $xml->item->name;\necho (int) $xml->item->price;\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Parsing untrusted XML with entity expansion enabled can read local files (XXE). Treat XML from strangers as hostile, and validate what you accept.",
+    "related": [
+      "json-encode-decode",
+      "file-read-write"
+    ]
+  }
+]

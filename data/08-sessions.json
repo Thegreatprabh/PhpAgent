@@ -1,0 +1,104 @@
+[
+  {
+    "id": "cookies",
+    "category": "Sessions & Cookies",
+    "title": "Cookies - setcookie, reading, and secure flags",
+    "keywords": [
+      "cookie",
+      "cookies",
+      "setcookie",
+      "COOKIE",
+      "cookie kaise set kare",
+      "remember me cookie"
+    ],
+    "functions": [
+      "setcookie"
+    ],
+    "answer": "Set a cookie with setcookie before any output. Read it on later requests from $_COOKIE. Mark cookies HttpOnly so JavaScript cannot read them, Secure so they only travel over HTTPS, and SameSite=Lax to reduce cross-site request forgery. Never store passwords or secrets in a cookie.",
+    "code": "setcookie(\"theme\", \"dark\", [\n    \"expires\" => time() + 86400 * 30,\n    \"path\" => \"/\",\n    \"httponly\" => true,\n    \"secure\" => true,\n    \"samesite\" => \"Lax\",\n]);\n$theme = $_COOKIE[\"theme\"] ?? \"light\";\necho $theme;\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "A cookie set during this request is not visible in $_COOKIE until the next request. Reading it immediately after setcookie returns the old value.",
+    "related": [
+      "sessions",
+      "csrf-protection"
+    ]
+  },
+  {
+    "id": "server-info",
+    "category": "Sessions & Cookies",
+    "title": "Request info from $_SERVER - method, path, IP, and user agent",
+    "keywords": [
+      "SERVER",
+      "REQUEST_METHOD",
+      "REQUEST_URI",
+      "REMOTE_ADDR",
+      "HTTP_USER_AGENT",
+      "request info",
+      "current url kaise nikale"
+    ],
+    "functions": [],
+    "answer": "$_SERVER['REQUEST_METHOD'] tells you GET or POST, REQUEST_URI gives the requested path, and REMOTE_ADDR gives the client IP. Build the current URL from the host and URI, but never trust the Host header for security decisions, because the client controls it.",
+    "code": "$method = $_SERVER[\"REQUEST_METHOD\"] ?? \"GET\";\n$path = $_SERVER[\"REQUEST_URI\"] ?? \"/\";\n$ip = $_SERVER[\"REMOTE_ADDR\"] ?? \"127.0.0.1\";\necho \"$method $path $ip\";\n",
+    "output": "GET / 127.0.0.1",
+    "runnable": true,
+    "pitfall": "REMOTE_ADDR is the last proxy's address when a load balancer or CDN sits in front of your app. Behind a proxy, check the forwarded headers your proxy documents, and only trust headers your own proxy sets.",
+    "related": [
+      "superglobals",
+      "get-post-forms"
+    ]
+  },
+  {
+    "id": "sessions",
+    "category": "Sessions & Cookies",
+    "title": "Sessions - login state with $_SESSION",
+    "keywords": [
+      "session",
+      "sessions",
+      "SESSION",
+      "session_start",
+      "login session",
+      "session kaise banaye",
+      "session destroy"
+    ],
+    "functions": [
+      "session_start",
+      "session_destroy",
+      "session_regenerate_id"
+    ],
+    "answer": "Call session_start before any output, then store login state in $_SESSION. Regenerate the session ID after login to prevent session fixation. Destroy the session and its cookie on logout. This example is syntax-checked only because sessions need an HTTP request.",
+    "code": "session_start();\n$_SESSION[\"user_id\"] = 42;\n$_SESSION[\"user_name\"] = \"Prabh\";\necho $_SESSION[\"user_name\"] ?? \"guest\";\n// After login:\n// session_regenerate_id(true);\n// Logout:\n// $_SESSION = [];\n// session_destroy();\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Calling session_start after echoing HTML triggers 'headers already sent'. Start the session at the very top of the script, before any output.",
+    "related": [
+      "cookies",
+      "password-verify"
+    ]
+  },
+  {
+    "id": "superglobals",
+    "category": "Sessions & Cookies",
+    "title": "Superglobals - $_GET, $_POST, $_SERVER, $_REQUEST, $_ENV",
+    "keywords": [
+      "superglobals",
+      "GET",
+      "POST",
+      "SERVER",
+      "REQUEST",
+      "ENV",
+      "superglobal kya hai",
+      "GET POST difference"
+    ],
+    "functions": [],
+    "answer": "$_GET holds URL parameters, $_POST holds form data, $_SERVER holds request and server details, and $_ENV holds environment variables. Avoid $_REQUEST because it merges sources and hides where a value came from. Read every superglobal value with ?? or isset, never directly.",
+    "code": "$page = $_GET[\"page\"] ?? \"home\";\n$method = $_SERVER[\"REQUEST_METHOD\"] ?? \"CLI\";\n$name = $_POST[\"name\"] ?? \"\";\n$debug = $_ENV[\"APP_DEBUG\"] ?? \"0\";\necho \"$page $method $name $debug\";\n",
+    "output": "home CLI  0",
+    "runnable": true,
+    "pitfall": "Trusting $_GET or $_POST values without validation is the root of most PHP security bugs. Treat every superglobal value as untrusted input.",
+    "related": [
+      "get-post-forms",
+      "validation-sanitization"
+    ]
+  }
+]

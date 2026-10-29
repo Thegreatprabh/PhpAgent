@@ -1,0 +1,103 @@
+[
+  {
+    "id": "debugging-xdebug",
+    "category": "Testing & Debugging",
+    "title": "Debugging with Xdebug - breakpoints, stack traces, and var_dump",
+    "keywords": [
+      "xdebug",
+      "breakpoint",
+      "debugger",
+      "stack trace",
+      "debug kaise kare",
+      "xdebug kaise use kare"
+    ],
+    "functions": [
+      "debug_backtrace",
+      "var_dump"
+    ],
+    "answer": "Xdebug lets an editor pause on a line, inspect variables, and step through code. Without it, debug_backtrace shows who called the current code, and xdebug_get_function_stack_trace adds the same detail. Never leave debugging output in production code.",
+    "code": "function kbTraceDemo(): array {\n    return debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);\n}\n$trace = kbTraceDemo();\necho count($trace) > 0 ? \"trace captured\" : \"empty\";\n// With Xdebug installed, set a breakpoint in your editor\n// and run the script with: php -d zend_extension=xdebug.so script.php\n",
+    "output": "trace captured",
+    "runnable": true,
+    "pitfall": "Xdebug slows requests noticeably. Keep it enabled only on development machines, never on a production server.",
+    "related": [
+      "errors-debugging",
+      "phpunit-concepts"
+    ]
+  },
+  {
+    "id": "phpunit-concepts",
+    "category": "Testing & Debugging",
+    "title": "PHPUnit concepts - tests, assertions, and data providers",
+    "keywords": [
+      "phpunit",
+      "unit test",
+      "assertion",
+      "assertEquals",
+      "data provider",
+      "test kaise likhe",
+      "phpunit test"
+    ],
+    "functions": [],
+    "answer": "A unit test calls one piece of code and asserts the result. Name test methods testSomething, keep one behaviour per test, and use data providers to run the same test with many inputs. Tests must not depend on each other or on a live database. This example is syntax-checked only because it needs PHPUnit installed.",
+    "code": "use PHPUnit\\Framework\\TestCase;\n\nfinal class KbCalculatorTest extends TestCase\n{\n    public function testAddsTwoNumbers(): void\n    {\n        $this->assertSame(5, 2 + 3);\n    }\n\n    /** @dataProvider kbPriceCases */\n    public function testTax(float $price, float $expected): void\n    {\n        $this->assertEqualsWithDelta($expected, $price * 1.18, 0.001);\n    }\n\n    public static function kbPriceCases(): array\n    {\n        return [[100.0, 118.0], [0.0, 0.0]];\n    }\n}",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Tests that share global state or run in a fixed order pass alone and fail together. Each test must set up its own data and clean up after itself.",
+    "related": [
+      "test-doubles-mocks",
+      "debugging-xdebug"
+    ]
+  },
+  {
+    "id": "profiling-slow-code",
+    "category": "Testing & Debugging",
+    "title": "Finding slow code - microtime, memory, and query counting",
+    "keywords": [
+      "profiling",
+      "slow code",
+      "microtime",
+      "memory usage",
+      "performance debug",
+      "slow query kaise dhoondhe"
+    ],
+    "functions": [
+      "microtime",
+      "memory_get_usage",
+      "memory_get_peak_usage"
+    ],
+    "answer": "Measure before optimising. microtime(true) times a block, and memory_get_peak_usage shows the worst memory use. Count database queries per request, because one query in a loop is the most common cause of slowness. Remove all measurement code before shipping.",
+    "code": "$start = microtime(true);\n$total = 0;\nfor ($i = 0; $i < 10000; $i++) {\n    $total += $i;\n}\n$elapsed = microtime(true) - $start;\necho $total . \" in \" . round($elapsed, 4) . \"s\";\necho \" peak: \" . memory_get_peak_usage(true) . \" bytes\";\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "A single timing run includes warm-up noise and gives a false winner. Repeat measurements and compare averages before changing code for speed.",
+    "related": [
+      "opcache-performance",
+      "debugging-xdebug"
+    ]
+  },
+  {
+    "id": "test-doubles-mocks",
+    "category": "Testing & Debugging",
+    "title": "Test doubles - stubs, mocks, and fakes without real services",
+    "keywords": [
+      "mock",
+      "mocks",
+      "stub",
+      "fake",
+      "test double",
+      "mock kaise banaye",
+      "fake database test"
+    ],
+    "functions": [],
+    "answer": "A stub returns fixed answers, a mock also checks how it was called, and a fake is a simple working replacement, such as an in-memory repository. Use doubles so tests never call real payment APIs or databases. This example is syntax-checked only because it needs PHPUnit installed.",
+    "code": "use PHPUnit\\Framework\\TestCase;\n\nfinal class KbOrderServiceTest extends TestCase\n{\n    public function testChargesThroughGateway(): void\n    {\n        $gateway = $this->createStub(KbPaymentGateway::class);\n        $gateway->method(\"charge\")->willReturn(true);\n        $service = new KbOrderService($gateway);\n        $this->assertTrue($service->placeOrder(100.0));\n    }\n}",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Mocking the class you are testing proves nothing. Mock only the boundaries, such as gateways and repositories, and test your own code for real.",
+    "related": [
+      "phpunit-concepts",
+      "debugging-xdebug"
+    ]
+  }
+]

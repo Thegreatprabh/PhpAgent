@@ -1,0 +1,143 @@
+[
+  {
+    "id": "directory-listing",
+    "category": "Files",
+    "title": "Working with directories - scandir, glob, mkdir, recursive delete safety",
+    "keywords": [
+      "scandir",
+      "glob",
+      "mkdir",
+      "is_dir",
+      "list files",
+      "directory list",
+      "folder me files kaise dekhe"
+    ],
+    "functions": [
+      "scandir",
+      "glob",
+      "mkdir",
+      "is_dir",
+      "rmdir"
+    ],
+    "answer": "scandir lists directory entries including . and .., which you usually skip. glob finds files matching a pattern, such as all *.php files. mkdir with recursive true creates nested folders in one call.",
+    "code": "$dir = sys_get_temp_dir() . \"/kb-dir-demo\";\nmkdir($dir, 0755, true);\nfile_put_contents($dir . \"/a.txt\", \"a\");\nfile_put_contents($dir . \"/b.txt\", \"b\");\nprint_r(glob($dir . \"/*.txt\"));\nunlink($dir . \"/a.txt\");\nunlink($dir . \"/b.txt\");\nrmdir($dir);\n",
+    "output": null,
+    "runnable": true,
+    "pitfall": "Never build a delete path from user input without validation. A recursive delete on the wrong folder destroys data with no undo.",
+    "related": [
+      "file-read-write",
+      "path-traversal-prevention"
+    ]
+  },
+  {
+    "id": "file-lines-csv",
+    "category": "Files",
+    "title": "Reading files line by line and CSV - fopen, fgets, fgetcsv",
+    "keywords": [
+      "fopen",
+      "fgets",
+      "fgetcsv",
+      "csv read",
+      "line by line",
+      "file line by line kaise padhe",
+      "csv kaise padhe"
+    ],
+    "functions": [
+      "fopen",
+      "fgets",
+      "fgetcsv",
+      "fclose",
+      "feof"
+    ],
+    "answer": "Open a file with fopen, read it line by line with fgets, and always close it with fclose. fgetcsv parses one CSV row at a time so large files never need to be loaded fully into memory.",
+    "code": "$path = sys_get_temp_dir() . \"/kb-data.csv\";\nfile_put_contents($path, \"name,age\\nAman,19\\nRiya,20\\n\");\n$handle = fopen($path, \"r\");\nwhile (($row = fgetcsv($handle)) !== false) {\n    echo $row[0] . \":\" . $row[1] . \";\";\n}\nfclose($handle);\nunlink($path);\n",
+    "output": "name:age;Aman:19;Riya:20;",
+    "runnable": true,
+    "pitfall": "Forgetting fclose leaks file handles, and on long-running scripts the process can run out of them. Close every handle you open, even on error paths.",
+    "related": [
+      "file-read-write",
+      "file-uploads"
+    ]
+  },
+  {
+    "id": "file-read-write",
+    "category": "Files",
+    "title": "Reading and writing files - file_get_contents and file_put_contents",
+    "keywords": [
+      "file_get_contents",
+      "file_put_contents",
+      "read file",
+      "write file",
+      "file read kaise kare",
+      "file write kaise kare"
+    ],
+    "functions": [
+      "file_get_contents",
+      "file_put_contents",
+      "file_exists",
+      "unlink"
+    ],
+    "answer": "file_get_contents reads a whole file into a string, and file_put_contents writes a string to a file. Check file_exists first when a missing file is expected, and use LOCK_EX when several requests may write the same file at once.",
+    "code": "$path = sys_get_temp_dir() . \"/kb-note.txt\";\nfile_put_contents($path, \"Hello file!\\n\", LOCK_EX);\necho file_get_contents($path);\necho file_exists($path) ? \"exists\" : \"missing\";\nunlink($path);\n",
+    "output": "Hello file!\nexists",
+    "runnable": true,
+    "pitfall": "Passing a user-supplied filename straight to these functions allows path traversal, such as ../../etc/passwd. Validate the filename against an allow-list first.",
+    "related": [
+      "file-uploads",
+      "path-traversal-prevention"
+    ]
+  },
+  {
+    "id": "file-uploads",
+    "category": "Files",
+    "title": "File uploads - $_FILES, validation, and safe storage",
+    "keywords": [
+      "file upload",
+      "upload file",
+      "FILES",
+      "move_uploaded_file",
+      "upload validation",
+      "file upload kaise kare"
+    ],
+    "functions": [
+      "move_uploaded_file",
+      "is_uploaded_file"
+    ],
+    "answer": "Uploaded files arrive in $_FILES with an error code, a temporary path, and a size. Check the error code, validate the real MIME type and extension against an allow-list, generate a new random filename, and move the file with move_uploaded_file into a folder outside the web root. This example is syntax-checked only because it needs a real HTTP upload.",
+    "code": "if (($_FILES[\"photo\"][\"error\"] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {\n    $tmp = $_FILES[\"photo\"][\"tmp_name\"];\n    $info = new finfo(FILEINFO_MIME_TYPE);\n    $mime = $info->file($tmp);\n    $allowed = [\"image/jpeg\" => \"jpg\", \"image/png\" => \"png\"];\n    if (isset($allowed[$mime])) {\n        $name = bin2hex(random_bytes(8)) . \".\" . $allowed[$mime];\n        move_uploaded_file($tmp, \"/var/uploads/\" . $name);\n    }\n}\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Trusting the uploaded filename or its extension lets an attacker upload a .php shell. Always rename the file and check the real MIME type.",
+    "related": [
+      "file-read-write",
+      "validation-sanitization"
+    ]
+  },
+  {
+    "id": "json-files-config",
+    "category": "Files",
+    "title": "JSON config files - json_encode, json_decode, and error checking",
+    "keywords": [
+      "json file",
+      "config file",
+      "json_encode",
+      "json_decode",
+      "read json",
+      "config kaise padhe"
+    ],
+    "functions": [
+      "json_encode",
+      "json_decode",
+      "json_last_error"
+    ],
+    "answer": "Store configuration as JSON and read it with json_decode. Always check json_last_error after decoding, because a broken file returns null silently. Use JSON_THROW_ON_ERROR when you want a broken file to raise an exception instead.",
+    "code": "$path = sys_get_temp_dir() . \"/kb-config.json\";\nfile_put_contents($path, json_encode([\"site\" => \"My Shop\", \"debug\" => false]));\n$config = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);\necho $config[\"site\"];\nunlink($path);\n",
+    "output": "My Shop",
+    "runnable": true,
+    "pitfall": "json_decode without the true flag returns objects, not arrays. Mixing the two styles in one codebase causes 'cannot use object as array' errors.",
+    "related": [
+      "json-encode-decode",
+      "file-read-write"
+    ]
+  }
+]

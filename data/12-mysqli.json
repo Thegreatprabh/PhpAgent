@@ -1,0 +1,50 @@
+[
+  {
+    "id": "mysqli-basics",
+    "category": "MySQLi",
+    "title": "MySQLi basics - connection and queries (procedural and object style)",
+    "keywords": [
+      "mysqli",
+      "mysqli connect",
+      "mysqli query",
+      "mysqli_connect",
+      "mysqli kaise use kare",
+      "mysqli vs pdo"
+    ],
+    "functions": [
+      "mysqli_connect",
+      "mysqli_query"
+    ],
+    "answer": "MySQLi works only with MySQL. The object style creates a mysqli object, checks connect_error, and runs queries on it. Prefer PDO for new projects because it supports many databases and named placeholders, but MySQLi prepared statements are safe when used correctly. This example is syntax-checked only because it needs a MySQL server.",
+    "code": "$db = new mysqli(\"localhost\", \"app\", \"secret\", \"shop\");\nif ($db->connect_error) {\n    die(\"Connection failed: \" . $db->connect_error);\n}\n$result = $db->query(\"SELECT id, name FROM users LIMIT 5\");\nwhile ($row = $result->fetch_assoc()) {\n    echo $row[\"name\"] . \"\\n\";\n}\n$db->close();\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "Concatenating variables into a MySQLi query string is just as unsafe as in any other driver. Always use prepared statements with bind_param.",
+    "related": [
+      "mysqli-prepared",
+      "pdo-connect"
+    ]
+  },
+  {
+    "id": "mysqli-prepared",
+    "category": "MySQLi",
+    "title": "MySQLi prepared statements - prepare, bind_param, get_result",
+    "keywords": [
+      "mysqli prepare",
+      "bind_param",
+      "get_result",
+      "mysqli prepared statement",
+      "mysqli secure query"
+    ],
+    "functions": [],
+    "answer": "Prepare the statement, bind each value with its type letter (s for string, i for integer, d for double, b for blob), execute, and read results with get_result. This example is syntax-checked only because it needs a MySQL server.",
+    "code": "$stmt = $db->prepare(\"SELECT id, name FROM users WHERE email = ?\");\n$email = $_POST[\"email\"] ?? \"\";\n$stmt->bind_param(\"s\", $email);\n$stmt->execute();\n$result = $stmt->get_result();\n$user = $result->fetch_assoc();\n$stmt->close();\n",
+    "output": null,
+    "runnable": false,
+    "pitfall": "bind_param binds variables by reference, so changing the variable after binding and before executing changes the value sent. Bind right before execute, or bind a fresh variable.",
+    "related": [
+      "mysqli-basics",
+      "sql-injection-prevention"
+    ]
+  }
+]
