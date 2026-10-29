@@ -2,12 +2,18 @@
 // PhpAgent - library API for the offline PHP expert agent.
 // No API calls, no network, no database. All answers come from the local
 // JSON knowledge base in data/*.json, loaded through src/lib.php.
-// Requires PHP 8.1+ (uses constructor property promotion and readonly-free
-// typed properties only). No external dependencies.
+// v2 adds: the exhaustive reflection-generated function index
+// (FunctionIndex), data-driven custom commands (CustomCommands), grounded
+// Gemini answers (GeminiClient, BYOK, only when the user configured a key),
+// and follow-up resolution against a previous topic.
+// Requires PHP 8.1+. No external dependencies.
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/lib.php';
+require_once __DIR__ . '/FunctionIndex.php';
+require_once __DIR__ . '/CustomCommands.php';
+require_once __DIR__ . '/Suggest.php';
 
 /**
  * Library API:
@@ -15,17 +21,28 @@ require_once __DIR__ . '/lib.php';
  *   $agent = PhpAgent::create();
  *   $result = $agent->answer('how do I connect to MySQL with PDO?');
  *   // $result['status'] is 'found' | 'not_found' | 'help' | 'topics'
- *   //   | 'search' | 'category'
+ *   //   | 'search' | 'category' | 'function' | 'command'
  *   // $result['entry'] is the best knowledge entry, or null.
+ *   // Pass the previous topic id as the 2nd argument so follow-ups like
+ *   // "example" resolve against it: $agent->answer('example', $lastId).
  */
 final class PhpAgent
 {
     /** @var array<int, array<string, mixed>> */
     private array $entries;
 
+    private FunctionIndex $index;
+
+    private CustomCommands $commands;
+
+    private string $dataDir;
+
     public function __construct(string $dataDir)
     {
+        $this->dataDir = $dataDir;
         $this->entries = php_agent_load($dataDir);
+        $this->index = new FunctionIndex($dataDir);
+        $this->commands = new CustomCommands($dataDir);
     }
 
     public static function create(?string $dataDir = null): self
@@ -33,15 +50,38 @@ final class PhpAgent
         return new self($dataDir ?? (__DIR__ . '/../data'));
     }
 
+    public function index(): FunctionIndex
+    {
+        return $this->index;
+    }
+
+    public function commands(): CustomCommands
+    {
+        return $this->commands;
+    }
+
+    /** @return array<string, mixed>|null */
+    public function entryById(string $id): ?array
+    {
+        foreach ($this->entries as $entry) {
+            if ((string) ($entry['id'] ?? '') === $id) {
+                return $entry;
+            }
+        }
+        return null;
+    }
+
     /**
-     * Answer a question, or handle a built-in command.
+     * Answer a question, handle a command, or look up a function.
      *
      * Commands (case-insensitive, trimmed):
      *   help | topics | search <words> | category:<name> | category <name>
+     *   fn <name> | /explain | /example | /compare | /debug | /cheat | /fn
      *
+     * @param mixed $gemini A GeminiClient or null (used by /explain).
      * @return array{status: string, entry: ?array, score: int, suggestions: array, categories?: array, results?: array, query: string}
      */
-    public function answer(string $question): array
+    public function answer(string $question, ?string $contextId = null, $gemini = null): array
     {
         $question = trim($question);
         $lower = php_agent_lower($question);
@@ -53,7 +93,7 @@ final class PhpAgent
                 'score' => 0,
                 'suggestions' => [],
                 'query' => $question,
-                'help' => 'Ask any PHP question in English or Hinglish, for example "how do I sort an array?" or "array ko sort kaise kare". Commands: help, topics, search <words>, category:<name>. Type exit to quit the interactive loop.',
+                'help' => 'Ask any PHP question in English or Hinglish, for example "how do I sort an array?" or "array ko sort kaise kare". Commands: help, topics, search <words>, category:<name>, fn <name>, /explain, /example, /compare, /debug, /cheat, /fn. Type exit to quit the interactive loop.',
             ];
         }
 
@@ -68,8 +108,38 @@ final class PhpAgent
             ];
         }
 
+        // Follow-up against the previous topic: "example", "us ka example do",
+        // "iska example", "aur batao". Needs the caller's remembered topic id.
+        if ($contextId !== null && $this->isFollowUp($lower)) {
+            $entry = $this->entryById($contextId);
+            if ($entry !== null) {
+                return [
+                    'status' => 'found',
+                    'entry' => $entry,
+                    'score' => 100,
+                    'suggestions' => [],
+                    'query' => $question,
+                    'followup' => true,
+                ];
+            }
+        }
+
+        // Custom commands: "/fn str_replace", "/example array sort", ...
+        if (str_starts_with($lower, '/')) {
+            return $this->commands->execute($question, $this, $this->index, $gemini, $contextId);
+        }
+
+        if (str_starts_with($lower, 'fn ')) {
+            $name = trim(substr($question, 3));
+            return $this->functionResult($name, $question);
+        }
+
         if (str_starts_with($lower, 'search ')) {
             $words = trim(substr($question, 7));
+            // A single function name searched directly resolves to its signature.
+            if (preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $words) === 1 && $this->index->find($words) !== null) {
+                return $this->functionResult($words, $question);
+            }
             return [
                 'status' => 'search',
                 'entry' => null,
@@ -91,13 +161,117 @@ final class PhpAgent
         }
 
         $found = php_agent_find($this->entries, $question);
+        if ($found['entry'] !== null) {
+            return [
+                'status' => 'found',
+                'entry' => $found['entry'],
+                'score' => $found['score'],
+                'suggestions' => $found['suggestions'],
+                'query' => $question,
+            ];
+        }
+
+        // A bare function name with no curated match resolves to the index.
+        $normalized = php_agent_normalize($question);
+        if (preg_match('/^[a-z_][a-z0-9_]*$/', $normalized) === 1 && $this->index->find($normalized) !== null) {
+            return $this->functionResult($normalized, $question);
+        }
+
         return [
-            'status' => $found['entry'] !== null ? 'found' : 'not_found',
-            'entry' => $found['entry'],
+            'status' => 'not_found',
+            'entry' => null,
             'score' => $found['score'],
             'suggestions' => $found['suggestions'],
             'query' => $question,
         ];
+    }
+
+    /** @return array<string, mixed> */
+    private function functionResult(string $name, string $question): array
+    {
+        $fn = $this->index->find($name);
+        if ($fn !== null) {
+            return [
+                'status' => 'function',
+                'entry' => null,
+                'score' => 100,
+                'suggestions' => [],
+                'query' => $question,
+                'name' => $name,
+                'function' => $fn,
+                'confidence' => 'Exact',
+            ];
+        }
+        $construct = $this->index->findConstruct($name);
+        if ($construct !== null) {
+            return [
+                'status' => 'found',
+                'entry' => $construct,
+                'score' => 100,
+                'suggestions' => [],
+                'query' => $question,
+                'confidence' => 'Exact',
+            ];
+        }
+        return [
+            'status' => 'function',
+            'entry' => null,
+            'score' => 0,
+            'suggestions' => [],
+            'query' => $question,
+            'name' => $name,
+            'function' => null,
+            'closest' => $this->index->closest($name, 3),
+            'confidence' => '',
+        ];
+    }
+
+    private function isFollowUp(string $lower): bool
+    {
+        $normalized = php_agent_normalize($lower);
+        $followUps = [
+            'example', 'example do', 'example dikhao', 'example batao',
+            'us ka example do', 'uska example do', 'us ka example',
+            'uska example', 'iska example do', 'is ka example do',
+            'is ka example', 'iska example', 'aur batao', 'aur',
+            'uske bare me', 'iske bare me', 'uske bare me batao',
+            'example chahiye', 'code dikhao', 'code do',
+        ];
+        return in_array($normalized, $followUps, true);
+    }
+
+    /**
+     * Local grounding for a Gemini call: top-3 curated matches plus the
+     * function signature when the query names a built-in function.
+     *
+     * @return array{text: string, entries: array<int, array{id: string, title: string}>, function: ?array}
+     */
+    public function groundingFor(string $query): array
+    {
+        $matches = $this->search($query, 3);
+        $lines = [];
+        $entries = [];
+        foreach ($matches as $entry) {
+            $entries[] = ['id' => (string) ($entry['id'] ?? ''), 'title' => (string) ($entry['title'] ?? '')];
+            $code = (string) ($entry['code'] ?? '');
+            if (strlen($code) > 600) {
+                $code = substr($code, 0, 600) . "\n... (truncated)";
+            }
+            $lines[] = 'TOPIC: ' . (string) $entry['title'] . "\n" . (string) $entry['answer'] . "\nCODE:\n" . $code;
+        }
+        $fn = null;
+        foreach (php_agent_tokens(php_agent_normalize($query)) as $token) {
+            $candidate = $this->index->find($token);
+            if ($candidate !== null) {
+                $fn = $candidate;
+                $lines[] = 'BUILT-IN FUNCTION SIGNATURE: ' . (string) $candidate['signature'] . ' (extension: ' . (string) $candidate['extension'] . ', deprecated: ' . (!empty($candidate['is_deprecated']) ? 'yes' : 'no') . ')';
+                break;
+            }
+        }
+        if ($lines === []) {
+            $lines[] = '(No local curated entry matched this question. Say so if you cannot answer from verified PHP knowledge.)';
+        }
+        return ['text' => implode("\n\n", $lines), 'entries' => $entries, 'function' => $fn];
     }
 
     /** @return array<int, array<string, mixed>> */

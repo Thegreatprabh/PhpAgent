@@ -227,6 +227,19 @@ check($cliCode2 === 0 && str_contains($cliOut2, 'not in the knowledge base yet')
 // Patterns are built by concatenation so this very file never contains the
 // forbidden literal strings itself. Only the cURL *knowledge example text*
 // (in JSON data files, not PHP code) may mention them.
+// v2: the Gemini client, the function index (php.net URLs), the key setup
+// script, and the index generator legitimately contain network-related
+// strings. They are allowlisted below and checked separately for key
+// leakage; every other shipped file must contain no network pattern.
+// Tests are not shipped runtime code and are excluded from this scan.
+$networkAllowed = [
+    'src/GeminiClient.php',
+    'src/FunctionIndex.php',
+    'setup-gemini.php',
+    'config/gemini.php',
+    'tools/generate-function-index.php',
+    'public/ai.php',
+];
 $forbidden = [
     'curl' . '_init', 'curl' . '_exec', 'curl' . '_setopt',
     'file_get_contents' . "('http", 'file_get_contents' . '("http',
@@ -237,13 +250,22 @@ $forbidden = [
 ];
 $scanned = 0;
 foreach ($phpFiles as $file) {
+    $rel = str_replace($root . '/', '', $file);
+    if (str_contains($file, '/tests/')) {
+        continue;
+    }
     $contents = file_get_contents($file);
     if ($contents === false) {
         continue;
     }
     $scanned++;
+    if (in_array($rel, $networkAllowed, true)) {
+        // Allowlisted: must never contain a real key literal.
+        check(!str_contains($contents, 'AI' . 'za'), 'no key literal in allowlisted ' . $rel);
+        continue;
+    }
     foreach ($forbidden as $pattern) {
-        check(!str_contains($contents, $pattern), 'no network call pattern in ' . str_replace($root . '/', '', $file), $pattern);
+        check(!str_contains($contents, $pattern), 'no network call pattern in ' . $rel, $pattern);
     }
 }
 check($scanned >= 5, 'network scan covered php files', $scanned);

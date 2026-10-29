@@ -39,7 +39,14 @@ function php_agent_load(string $dataDir): array
         return [];
     }
     sort($files);
+    // The function index, constructs, and custom commands are separate
+    // layers with their own shapes; they are loaded by FunctionIndex and
+    // CustomCommands, not as curated entries.
+    $skip = ['all-functions.json', 'language-constructs.json', 'custom-commands.json'];
     foreach ($files as $file) {
+        if (in_array(basename($file), $skip, true)) {
+            continue;
+        }
         $raw = file_get_contents($file);
         if ($raw === false) {
             continue;
@@ -223,6 +230,21 @@ function php_agent_find(array $entries, string $query): array
         return ['entry' => $best['entry'], 'score' => $best['score'], 'suggestions' => $suggestions];
     }
     return ['entry' => null, 'score' => $best['score'] ?? 0, 'suggestions' => $suggestions];
+}
+
+/** Match confidence in plain words, never a raw number dump. */
+function php_agent_confidence_label(int $score): string
+{
+    if ($score >= 100) {
+        return 'Exact';
+    }
+    if ($score >= 25) {
+        return 'Close';
+    }
+    if ($score > 0) {
+        return 'Related';
+    }
+    return '';
 }
 
 /** All distinct categories, in first-seen order. */

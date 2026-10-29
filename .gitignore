@@ -4,3 +4,7 @@ Thumbs.db
 /vendor/
 .idea/
 .vscode/
+# PhpAgent secrets - never commit. The Gemini key lives only on the owner's machine.
+config/key.php
+.env
+config/key.php.tmp-*
